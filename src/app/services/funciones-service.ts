@@ -102,7 +102,12 @@ export class FuncionesService {
         const fin = sumarMinutos(inicio, peli.duracion_min);
         const sala = this.buscarSalaLibre(inicio, fin, salas as Sala[], ocupadas);
         if (!sala) {
-          conflictos.push({ fecha, hora, motivo: 'No hay salas libres en ese horario' });
+          const sugerido = this.primerHorarioLibre(inicio, peli.duracion_min, salas as Sala[], ocupadas);
+          conflictos.push({
+            fecha,
+            hora,
+            motivo: sugerido ? `No hay salas libres en ese horario (el primero libre ese día es a las ${sugerido})` : 'No hay salas libres en ese horario ni más tarde ese día',
+          });
           continue;
         }
         const funcion: FuncionNueva = {
@@ -129,6 +134,21 @@ export class FuncionesService {
       );
     }
     return { creadas: nuevas.length, conflictos };
+  }
+
+  /**
+   * Cuando no hay sala, busca de a 10 minutos el primer horario posterior (hasta las 23:50)
+   * en el que alguna sala queda libre, para sugerírselo al admin.
+   */
+  private primerHorarioLibre(desde: Date, duracion: number, salas: Sala[], funciones: FuncionNueva[]): string | null {
+    const limite = new Date(desde);
+    limite.setHours(23, 50, 0, 0);
+    for (let inicio = sumarMinutos(desde, 10); inicio <= limite; inicio = sumarMinutos(inicio, 10)) {
+      if (this.buscarSalaLibre(inicio, sumarMinutos(inicio, duracion), salas, funciones)) {
+        return inicio.toLocaleTimeString('es-AR', { hour: '2-digit', minute: '2-digit', hourCycle: 'h23' });
+      }
+    }
+    return null;
   }
 
   /**

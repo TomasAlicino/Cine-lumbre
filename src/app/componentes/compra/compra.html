@@ -137,9 +137,6 @@
                         @if (formulario.controls.email.touched && formulario.controls.email.invalid) { <span class="error">Ingresá un mail válido.</span> }
                       </div>
                     </div>
-                    @if (!usuario() && edadRequerida() > 0) {
-                      <label class="check declaracion"><input type="checkbox" formControlName="declaraAdulto" /> Confirmo que soy mayor de {{ edadRequerida() }} años o que asiste un adulto.</label>
-                    }
                     @if (!usuario()) {
                       <p class="suave chico">Estás comprando sin cuenta. <a routerLink="/registro">Creá una</a> y tu primera compra tiene {{ d.porcentajeBienvenida }}% de descuento, además de sumar puntos.</p>
                     }

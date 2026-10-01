@@ -1,12 +1,10 @@
-import { Component, OnDestroy, OnInit, computed, inject, signal } from '@angular/core';
+import { Component, OnInit, computed, inject, signal } from '@angular/core';
 import { FormBuilder, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
-import { Subscription } from 'rxjs';
 import { SelectorDias } from '../selector-dias/selector-dias';
 import { SelectorHorarios } from '../selector-horarios/selector-horarios';
 import { MascaraFechaDirective } from '../../directivas/directivas';
 import { FORMATOS, Formato, FuncionCompleta, Idioma, Pelicula } from '../../models/models';
 import { DiaPipe, FechaARPipe, HoraPipe, PesosPipe } from '../../pipes/pipes';
-import { Feriado, FeriadosService } from '../../services/feriados-service';
 import { FuncionesService, ResultadoProgramacion } from '../../services/funciones-service';
 import { PeliculasService } from '../../services/peliculas-service';
 import { ToastService } from '../../services/toast-service';
@@ -20,10 +18,9 @@ import { fechaARValida } from '../../utils/validadores';
   templateUrl: './admin-funciones.html',
   styleUrl: './admin-funciones.scss',
 })
-export class AdminFunciones implements OnInit, OnDestroy {
+export class AdminFunciones implements OnInit {
   private funcionesService = inject(FuncionesService);
   private peliculasService = inject(PeliculasService);
-  private feriadosService = inject(FeriadosService);
   private toast = inject(ToastService);
   private fb = inject(FormBuilder);
 
@@ -48,9 +45,6 @@ export class AdminFunciones implements OnInit, OnDestroy {
     precio_vip: [10000, [Validators.required, Validators.min(0)]],
   });
 
-  // Feriados (API externa por HttpClient): solo es un aviso, no impide programar
-  feriados = signal<Feriado[]>([]);
-  private subFeriados: Subscription[] = [];
 
   // ── Agenda de los próximos 14 días ──
   cargando = signal(true);
@@ -69,22 +63,6 @@ export class AdminFunciones implements OnInit, OnDestroy {
   ngOnInit() {
     this.cargarPeliculas();
     this.cargarAgenda();
-    // Se traen los feriados de este año y del próximo (la programación puede cruzar de año)
-    const anio = new Date().getFullYear();
-    this.traerFeriados(anio);
-    this.traerFeriados(anio + 1);
-  }
-
-  ngOnDestroy() {
-    this.subFeriados.forEach((s) => s.unsubscribe());
-  }
-
-  private traerFeriados(anio: number) {
-    const sub = this.feriadosService.traerFeriados(anio).subscribe({
-      next: (lista) => this.feriados.update((actual) => [...actual, ...lista]),
-      error: () => this.toast.info('No se pudieron consultar los feriados.'),
-    });
-    this.subFeriados.push(sub);
   }
 
   async cargarPeliculas() {
@@ -107,17 +85,6 @@ export class AdminFunciones implements OnInit, OnDestroy {
     } finally {
       this.cargando.set(false);
     }
-  }
-
-  /** Feriados que caen dentro del rango elegido en el formulario. */
-  feriadosEnRango(): Feriado[] {
-    const desde = parsearFechaAR(this.form.controls.desde.value);
-    const hasta = parsearFechaAR(this.form.controls.hasta.value);
-    if (!desde || !hasta) return [];
-    // Las fechas yyyy-mm-dd se pueden comparar como texto
-    return this.feriados()
-      .filter((f) => f.date >= desde && f.date <= hasta)
-      .sort((a, b) => a.date.localeCompare(b.date));
   }
 
   rapido(dias: number) {

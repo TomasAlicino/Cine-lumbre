@@ -41,17 +41,6 @@
       }
     },
     {
-      "name": "feriados",
-      "urls": [
-        "https://date.nager.at/**"
-      ],
-      "cacheConfig": {
-        "strategy": "performance",
-        "maxSize": 5,
-        "maxAge": "7d"
-      }
-    },
-    {
       "name": "posters-tmdb",
       "urls": [
         "https://image.tmdb.org/**"

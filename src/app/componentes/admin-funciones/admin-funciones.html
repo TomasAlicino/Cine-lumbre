@@ -43,18 +43,6 @@
       </div>
     </div>
 
-    @if (feriadosEnRango().length) {
-      <div class="aviso ancho feriados" role="status">
-        <strong>El rango incluye feriados:</strong>
-        <ul>
-          @for (f of feriadosEnRango(); track f.date) {
-            <li>{{ f.date | fechaAR }} — {{ f.localName }}</li>
-          }
-        </ul>
-        <p class="suave chico">Es solo un aviso: las funciones se programan igual.</p>
-      </div>
-    }
-
     <div class="campo ancho">
       <span class="etiqueta-campo">Días de la semana</span>
       <app-selector-dias [(valores)]="dias" />

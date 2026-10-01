@@ -66,9 +66,6 @@
             >
               <span>{{ d.etiqueta }}</span>
               <small>{{ d.sub }}</small>
-              @if (feriados().get(d.fecha); as feriado) {
-                <em class="feriado" [title]="feriado">Feriado</em>
-              }
             </button>
           }
         </div>

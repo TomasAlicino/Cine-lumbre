@@ -74,14 +74,4 @@
     </section>
   </div>
 
-  @if (historial().length) {
-    <section class="historial">
-      <h2>Últimas validaciones de este turno</h2>
-      <ul>
-        @for (h of historial(); track $index) {
-          <li [class.ok]="h.ok"><span>{{ h.hora }}</span> {{ h.codigo }} — {{ h.titulo }}</li>
-        }
-      </ul>
-    </section>
-  }
 </div>

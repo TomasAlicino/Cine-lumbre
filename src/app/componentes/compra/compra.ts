@@ -132,7 +132,6 @@ export class Compra implements OnInit, OnDestroy, ConCambiosPendientes {
   formulario = this.fb.nonNullable.group({
     nombre: ['', [Validators.required, Validators.minLength(3)]],
     email: ['', [Validators.required, Validators.email]],
-    declaraAdulto: [false],
     numero: ['', [Validators.required, tarjetaValida]],
     vencimiento: ['', [Validators.required, vencimientoValido]],
     cvv: ['', [Validators.required, Validators.pattern(/^\d{3,4}$/)]],
@@ -359,12 +358,7 @@ export class Compra implements OnInit, OnDestroy, ConCambiosPendientes {
       this.toast.error('Revisá los datos marcados en rojo.');
       return;
     }
-    // Sin cuenta no sabemos la edad: el comprador declara que asiste un adulto
-    const { nombre, email, declaraAdulto } = this.formulario.getRawValue();
-    if (!this.usuario() && cot.requiereAdulto && !declaraAdulto) {
-      this.toast.error(`Confirmá que sos mayor de ${this.edadRequerida()} o que asiste un adulto.`);
-      return;
-    }
+    const { nombre, email } = this.formulario.getRawValue();
 
     this.comprando.set(true);
     try {

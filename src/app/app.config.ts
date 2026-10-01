@@ -10,7 +10,7 @@ export const appConfig: ApplicationConfig = {
     provideZoneChangeDetection({ eventCoalescing: true }),
     // Al cambiar de página se vuelve arriba de todo (y los links con #fragmento bajan hasta esa sección)
     provideRouter(routes, withInMemoryScrolling({ scrollPositionRestoration: 'top', anchorScrolling: 'enabled' })),
-    // HttpClient para la API de feriados (FeriadosService)
+    // HttpClient para la API de TMDB (TmdbService)
     provideHttpClient(),
     // PWA: el service worker cachea la app para que abra sin conexión
     provideServiceWorker('ngsw-worker.js', {

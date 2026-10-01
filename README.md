@@ -101,14 +101,14 @@ Componente (signals) ──► Servicio (async/await) ──► Supabase
 | **Lazy loading** | Todas las pantallas con `loadComponent`; el área de empleados con `loadChildren` |
 | **Módulos** | `StaffModule` + `StaffRoutingModule` (`RouterModule.forChild`), con `Validador` declarado (`standalone: false`) |
 | **Servicios** | `services/`, `providedIn: 'root'`, inyectados con `inject()` |
-| **HTTP y Observables** | `FeriadosService` con `HttpClient` contra la API pública [Nager.Date](https://date.nager.at) (lista *public-apis*): marca los feriados en las funciones; `subscribe({ next, error })` y `unsubscribe` en `ngOnDestroy` |
+| **HTTP y Observables** | `TmdbService` con `HttpClient` contra la API pública [TMDB](https://www.themoviedb.org) (lista *public-apis*): en Admin → Películas se busca una película y se completa el formulario; `subscribe({ next, error })` y `unsubscribe` en `ngOnDestroy` |
 | **Formularios** | Reactive Forms con `FormBuilder` y `Validators` (más validadores propios en `utils/validadores.ts`) en ingreso, registro, perfil, compra y todo el admin; `ngModel` en buscadores |
 | **Supabase** | Auth (`signUp`, `signInWithPassword`, `signOut`, `getUser`), tablas con `select/insert/update/delete`, **Storage** para los pósters (`upload`, `getPublicUrl`, `remove`) |
 | **Guards** | `authGuard`, `rolGuard('admin')`, `invitadoGuard` (CanActivate) y `salidaCompraGuard` (CanDeactivate: confirma y libera las butacas al salir a mitad de compra) |
 | **Pipes** | 8 pipes propios en `pipes/pipes.ts` |
 | **Directivas** | `*appSiRol` (estructural: `TemplateRef` + `ViewContainerRef`), `appMascaraFecha`, `appImagenRespaldo` y `appAutofoco` (de atributo, con `@HostListener`) |
 | **Firebase Hosting** | `firebase.json` (rewrite a `index.html` para las rutas de Angular) |
-| **PWA** | `@angular/service-worker`, `ngsw-config.json` (también cachea los feriados), `manifest.webmanifest`, íconos |
+| **PWA** | `@angular/service-worker`, `ngsw-config.json` (también cachea los pósters de TMDB), `manifest.webmanifest`, íconos |
 
 ---
 
@@ -118,6 +118,8 @@ Componente (signals) ──► Servicio (async/await) ──► Supabase
 etc., con claves foráneas: no se puede borrar una función con entradas vendidas (la base devuelve el
 error `23503` y el servicio lo traduce a un mensaje). Los géneros son un `text[]`, porque una película
 puede tener varios.
+
+**Películas desde TMDB.** Las películas se guardan en Supabase, porque el cine decide qué proyecta, con qué funciones y precios. TMDB solo se usa para cargarlas: el admin busca el título y se completan sinopsis, duración, géneros, clasificación, estreno y póster. Los datos iniciales son películas reales tomadas de TMDB (`docs/reiniciar-datos.sql` vuelve a dejarlas limpias).
 
 **Un solo cliente de Supabase.** En clase cada servicio creaba su cliente con `createClient`. Acá hay
 más de quince servicios, y varios clientes en la misma página se pisan la sesión. Por eso

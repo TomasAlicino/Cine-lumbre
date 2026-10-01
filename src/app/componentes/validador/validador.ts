@@ -11,13 +11,6 @@ interface Resultado {
   pedido: PedidoCompleto | null;
 }
 
-interface Registro {
-  hora: string;
-  codigo: string;
-  titulo: string;
-  ok: boolean;
-}
-
 /**
  * Pantalla para empleados: valida el QR con la cámara (librería html5-qrcode) o tipeando el código.
  * El mismo QR sirve una vez para la sala y otra vez para el candy bar.
@@ -36,7 +29,6 @@ export class Validador implements OnDestroy {
   codigo = signal('');
   validando = signal(false);
   resultado = signal<Resultado | null>(null);
-  historial = signal<Registro[]>([]);
   camaraActiva = signal(false);
   errorCamara = signal('');
 
@@ -62,33 +54,20 @@ export class Validador implements OnDestroy {
     try {
       const pedido = await this.validacion.validar(codigo, modo);
       const personas = pedido.butacas.length;
-      this.mostrar(
-        {
-          ok: true,
-          titulo: modo === 'sala' ? 'Puede ingresar' : 'Entregar productos',
-          detalle: modo === 'sala' ? `${personas} ${personas === 1 ? 'persona' : 'personas'}.` : 'El candy queda marcado como retirado.',
-          pedido,
-        },
-        codigo,
-      );
+      this.resultado.set({
+        ok: true,
+        titulo: modo === 'sala' ? 'Puede ingresar' : 'Entregar productos',
+        detalle: modo === 'sala' ? `${personas} ${personas === 1 ? 'persona' : 'personas'}.` : 'El candy queda marcado como retirado.',
+        pedido,
+      });
     } catch (e) {
-      this.mostrar({ ok: false, titulo: 'No válido', detalle: (e as Error).message, pedido: null }, codigo);
+      this.resultado.set({ ok: false, titulo: 'No válido', detalle: (e as Error).message, pedido: null });
     } finally {
       this.validando.set(false);
       this.codigo.set('');
     }
   }
 
-  private mostrar(r: Resultado, codigo: string) {
-    this.resultado.set(r);
-    const registro: Registro = {
-      hora: new Date().toLocaleTimeString('es-AR', { hour: '2-digit', minute: '2-digit', hourCycle: 'h23' }),
-      codigo,
-      titulo: `${this.modo() === 'sala' ? 'Sala' : 'Candy'}: ${r.titulo}`,
-      ok: r.ok,
-    };
-    this.historial.update((lista) => [registro, ...lista].slice(0, 12));
-  }
 
   async iniciarCamara() {
     this.errorCamara.set('');

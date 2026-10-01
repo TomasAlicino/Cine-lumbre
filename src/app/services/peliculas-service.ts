@@ -51,11 +51,17 @@ export class PeliculasService {
     return ventas;
   }
 
-  /** Las 3 más vendidas entre las que tienen la venta abierta. */
+  /**
+   * Las 3 más vendidas entre las que tienen la venta abierta.
+   * Si empatan (por ejemplo, sin ventas todavía) van primero los estrenos más nuevos.
+   */
   async top3(peliculas: Pelicula[]): Promise<Pelicula[]> {
     const ventas = await this.ventasPorPelicula();
     return this.enVenta(peliculas)
-      .sort((a, b) => (ventas.get(b.id) ?? 0) - (ventas.get(a.id) ?? 0))
+      .sort(
+        (a, b) =>
+          (ventas.get(b.id) ?? 0) - (ventas.get(a.id) ?? 0) || b.fecha_estreno.localeCompare(a.fecha_estreno),
+      )
       .slice(0, 3);
   }
 

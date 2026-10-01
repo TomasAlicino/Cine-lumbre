@@ -21,11 +21,6 @@ dl div { display: flex; gap: 10px; }
 dt { color: var(--humo); min-width: 70px; font-size: var(--t-s); }
 dd { margin: 0; font-weight: 600; }
 .adulto { margin-top: 10px !important; padding: 8px 12px; background: var(--terciopelo); color: #fff; font-weight: 700; border-radius: var(--r-s); }
-.historial { margin-top: 28px; }
-.historial ul { list-style: none; padding: 0; margin: 0; font-size: var(--t-s); }
-.historial li { padding: 8px 0; border-bottom: 1px solid var(--linea); color: var(--terciopelo-claro); }
-.historial li.ok { color: var(--ok); }
-.historial li span { color: var(--humo); margin-right: 8px; font-variant-numeric: tabular-nums; }
 
 @media (max-width: 560px) {
   .modos { grid-template-columns: 1fr; }

@@ -7,7 +7,6 @@ import { ImagenRespaldoDirective } from '../../directivas/directivas';
 import { FuncionCompleta, Pelicula, Resena } from '../../models/models';
 import { ClasificacionPipe, DiaPipe, DuracionPipe, FechaARPipe, HoraPipe, PesosPipe } from '../../pipes/pipes';
 import { AuthService } from '../../services/auth-service';
-import { FeriadosService } from '../../services/feriados-service';
 import { FuncionesService } from '../../services/funciones-service';
 import { NotificacionesService } from '../../services/notificaciones-service';
 import { PeliculasService } from '../../services/peliculas-service';
@@ -47,13 +46,11 @@ export class PeliculaDetalle implements OnInit, OnDestroy {
   private peliculas = inject(PeliculasService);
   private funcionesSrv = inject(FuncionesService);
   private resenasSrv = inject(ResenasService);
-  private feriadosSrv = inject(FeriadosService);
   private toast = inject(ToastService);
   auth = inject(AuthService);
   notificaciones = inject(NotificacionesService);
 
   private sub?: Subscription;
-  private subsFeriados: Subscription[] = [];
   private idActual = 0;
 
   cargando = signal(true);
@@ -62,8 +59,6 @@ export class PeliculaDetalle implements OnInit, OnDestroy {
   resenas = signal<Resena[]>([]);
   promedio = signal<Promedio | undefined>(undefined);
   diaElegido = signal<string | null>(null);
-  /** Feriados: fecha yyyy-mm-dd → nombre del feriado. */
-  feriados = signal(new Map<string, string>());
 
   // Formulario de reseña
   estrellas = signal(0);
@@ -109,12 +104,10 @@ export class PeliculaDetalle implements OnInit, OnDestroy {
       }
       this.cargar(id);
     });
-    this.cargarFeriados();
   }
 
   ngOnDestroy() {
     this.sub?.unsubscribe();
-    this.subsFeriados.forEach((s) => s.unsubscribe());
   }
 
   /** Deja todo como recién entrado, para que no quede nada de la película anterior. */
@@ -155,27 +148,6 @@ export class PeliculaDetalle implements OnInit, OnDestroy {
       this.toast.error((e as Error).message);
     } finally {
       if (id === this.idActual) this.cargando.set(false);
-    }
-  }
-
-  /**
-   * Las funciones se programan con pocas semanas de anticipación, así que alcanza con
-   * los feriados de este año y del siguiente (por las funciones de diciembre a enero).
-   * Si la API falla, simplemente no se marcan los feriados.
-   */
-  private cargarFeriados() {
-    const anio = new Date().getFullYear();
-    for (const a of [anio, anio + 1]) {
-      const s = this.feriadosSrv.traerFeriados(a).subscribe({
-        next: (lista) =>
-          this.feriados.update((mapa) => {
-            const nuevo = new Map(mapa);
-            lista.forEach((f) => nuevo.set(f.date, f.localName));
-            return nuevo;
-          }),
-        error: (e) => console.error('No se pudieron traer los feriados', e),
-      });
-      this.subsFeriados.push(s);
     }
   }
 

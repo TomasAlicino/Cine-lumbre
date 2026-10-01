@@ -10,7 +10,6 @@ h1 { font-size: clamp(2.4rem, 6vw, var(--t-4xl)); margin-bottom: 14px; }
 .dia { flex: none; min-width: 84px; padding: 10px 12px; border: 1px solid var(--linea); border-radius: var(--r-s); background: transparent; color: var(--pantalla); cursor: pointer; display: flex; flex-direction: column; align-items: flex-start; gap: 2px; font-family: inherit; }
 .dia span { font: 700 var(--t-l) / 1 var(--f-display); }
 .dia small { color: var(--humo); font-size: var(--t-xs); }
-.dia .feriado { margin-top: 2px; padding: 1px 6px; border-radius: 999px; background: var(--laton); color: var(--noche); font-size: var(--t-xs); font-style: normal; font-weight: 600; }
 .dia.activo { background: var(--pantalla); color: var(--noche); border-color: var(--pantalla); }
 .dia.activo small { color: var(--noche-3); }
 .horarios { display: grid; grid-template-columns: repeat(auto-fill, minmax(190px, 1fr)); gap: 12px; }
