@@ -35,22 +35,6 @@ npm start            # http://localhost:4200
 npm run build        # genera dist/cine-lumbre/browser
 ```
 
-### Configurar Supabase
-
-1. En **Authentication → Providers → Email**, desactivar *Confirm email*.
-2. Correr [docs/supabase.sql](docs/supabase.sql) completo en el **SQL Editor**. Crea las tablas, las
-   políticas de seguridad, los triggers, el bucket `posters` y los datos iniciales (salas, películas,
-   candy, cupones y recompensas).
-3. Completar [src/environments/environment.ts](src/environments/environment.ts) con `supabaseUrl` y
-   `supabaseKey` (Project Settings → API → *publishable key*). **Nunca** la `service_role` key.
-4. Registrarse desde la app con `admin@lumbre.com` y `empleado@lumbre.com` y darles el rol desde el
-   SQL Editor (está al final de `supabase.sql`):
-   ```sql
-   update public.perfiles set rol = 'admin'    where email = 'admin@lumbre.com';
-   update public.perfiles set rol = 'empleado' where email = 'empleado@lumbre.com';
-   ```
-5. Ingresar como admin → **Funciones** y programar las funciones de cada película.
-
 ### Deploy en Firebase Hosting
 
 ```bash
