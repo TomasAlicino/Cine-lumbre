@@ -1,10 +1,10 @@
 /**
- * Configuración de Supabase (igual que en el ejemplo de clase).
- * Completar con los datos del proyecto: Supabase → Project Settings → API.
- * Si quedan vacíos la app funciona en modo local (localStorage) para poder probarla sin backend.
+ * Datos del proyecto de Supabase (Project Settings → API).
+ * La clave publishable puede estar en el front: lo que protege los datos son las
+ * políticas de Row Level Security definidas en docs/supabase.sql.
  */
 export const environment = {
   production: false,
   supabaseUrl: 'https://ilqxtpnosjdjxypcenyr.supabase.co',
-  supabasePublishableKey: 'sb_publishable_m-xmNXV0V40sJDblzgiizA_d2O3LrgW',
+  supabaseKey: 'sb_publishable_m-xmNXV0V40sJDblzgiizA_d2O3LrgW',
 };
