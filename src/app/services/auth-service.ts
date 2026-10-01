@@ -22,6 +22,21 @@ export class AuthService {
   /** Se resuelve cuando terminó de leerse la sesión guardada (los guards la esperan). */
   private sesionCargada: Promise<void> = this.cargarSesion();
 
+  /** true mientras esta pestaña está ingresando, registrándose o saliendo. */
+  private cambiandoSesion = false;
+
+  constructor() {
+    // Todas las pestañas comparten la sesión de Supabase. Si en otra pestaña se ingresa con otra
+    // cuenta o se sale, esta recarga la página para no seguir mostrando (y usando) al usuario anterior.
+    this.supabase.auth.onAuthStateChange((_evento, sesion) => {
+      const id = sesion?.user.id ?? null;
+      if (this.cambiandoSesion || id === (this.usuario()?.id ?? null)) return;
+      this.sesionCargada.then(() => {
+        if (!this.cambiandoSesion && id !== (this.usuario()?.id ?? null)) window.location.reload();
+      });
+    });
+  }
+
   esperarSesion(): Promise<void> {
     return this.sesionCargada;
   }
@@ -36,7 +51,22 @@ export class AuthService {
     return u ? edad(u.fecha_nacimiento) : null;
   }
 
-  async login(email: string, password: string): Promise<Perfil> {
+  login(email: string, password: string): Promise<Perfil> {
+    return this.mientrasCambia(() => this.ingresar(email, password));
+  }
+
+  registrar(datos: DatosRegistro): Promise<Perfil> {
+    return this.mientrasCambia(() => this.crearCuenta(datos));
+  }
+
+  logout(): Promise<void> {
+    return this.mientrasCambia(async () => {
+      await this.supabase.auth.signOut();
+      this.usuario.set(null);
+    });
+  }
+
+  private async ingresar(email: string, password: string): Promise<Perfil> {
     const { data, error } = await this.supabase.auth.signInWithPassword({ email: email.trim().toLowerCase(), password });
     if (error) throw new Error(this.traducir(error.message));
     const perfil = await this.traerPerfil(data.user.id);
@@ -48,7 +78,7 @@ export class AuthService {
     return perfil;
   }
 
-  async registrar(datos: DatosRegistro): Promise<Perfil> {
+  private async crearCuenta(datos: DatosRegistro): Promise<Perfil> {
     const email = datos.email.trim().toLowerCase();
     const { data, error } = await this.supabase.auth.signUp({ email, password: datos.password });
     if (error) throw new Error(this.traducir(error.message));
@@ -68,9 +98,14 @@ export class AuthService {
     return creado as Perfil;
   }
 
-  async logout(): Promise<void> {
-    await this.supabase.auth.signOut();
-    this.usuario.set(null);
+  /** Marca que el cambio de sesión es de esta pestaña (así no se recarga sola). */
+  private async mientrasCambia<T>(accion: () => Promise<T>): Promise<T> {
+    this.cambiandoSesion = true;
+    try {
+      return await accion();
+    } finally {
+      this.cambiandoSesion = false;
+    }
   }
 
   /** Vuelve a leer el perfil (después de comprar o cancelar cambian los puntos y el crédito). */
@@ -83,7 +118,10 @@ export class AuthService {
   private async cargarSesion(): Promise<void> {
     try {
       const { data } = await this.supabase.auth.getUser();
-      if (data.user) this.usuario.set(await this.traerPerfil(data.user.id));
+      if (!data.user) return;
+      const perfil = await this.traerPerfil(data.user.id);
+      if (perfil) this.usuario.set(perfil);
+      else await this.mientrasCambia(() => this.supabase.auth.signOut()); // cuenta sin perfil: se cierra la sesión
     } catch (e) {
       console.error('No se pudo leer la sesión', e);
     }
