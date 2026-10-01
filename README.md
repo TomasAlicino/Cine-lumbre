@@ -10,7 +10,18 @@ para empleados y panel de administración con reportes.
 - 📄 **Requerimientos:** [docs/REQUERIMIENTOS.md](docs/REQUERIMIENTOS.md)
 - 🗄️ **Esquema Supabase:** [docs/supabase.sql](docs/supabase.sql)
 
+### Cuentas de prueba
+
+| Rol | Mail | Contraseña | Para probar |
+|---|---|---|---|
+| Admin | admin@lumbre.com | admin123 | panel de administración y reportes |
+| Empleado | empleado@lumbre.com | empleado123 | validar QR (sala y candy) |
+| Cliente | cliente@lumbre.com | cliente123 | compras, puntos, crédito, reseñas |
+| Cliente de 68 años | mayor@lumbre.com | mayor123 | cupón para mayores de 50 |
+| Cliente de 13 años | joven@lumbre.com | joven123 | restricción de edad (+13 sí, +18 no) |
+
 Cupones de prueba: `LUMBRE10` (10%) y `DORADOS50` (30%, solo para mayores de 50).
+Tarjeta de prueba: `4111 1111 1111 1111`, vencimiento futuro, CVV `123`.
 
 ---
 
