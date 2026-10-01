@@ -23,7 +23,8 @@ tfoot th { color: var(--pantalla); }
 .dia-col { font-size: 10px; color: var(--humo); text-align: center; white-space: nowrap; overflow: hidden; }
 
 .dos { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
-.periodo { margin: -6px 0 16px; text-transform: capitalize; }
+.periodo { margin: -6px 0 16px; }
+.periodo::first-letter { text-transform: uppercase; }
 .barras { display: flex; flex-direction: column; gap: 10px; }
 .barra-fila { display: grid; grid-template-columns: 150px 1fr 40px; gap: 10px; align-items: center; font-size: var(--t-s); }
 .nombre { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
