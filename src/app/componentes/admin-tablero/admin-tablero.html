@@ -1,0 +1,139 @@
+<header class="cabecera-pagina">
+  <div>
+    <h1>Reportes</h1>
+    <p>Facturación, entradas vendidas, películas más vistas y producto estrella del candy.</p>
+  </div>
+</header>
+
+<section class="panel">
+  <div class="barra">
+    <div class="chips">
+      <button type="button" class="chip" [class.activo]="atajo() === 7" (click)="ultimosDias(7)">Últimos 7 días</button>
+      <button type="button" class="chip" [class.activo]="atajo() === 30" (click)="ultimosDias(30)">Últimos 30 días</button>
+      <button type="button" class="chip" [class.activo]="atajo() === 'mes'" (click)="esteMes()">Este mes</button>
+    </div>
+    <div class="rango">
+      <label>Desde <input [(ngModel)]="desdeTxt" appMascaraFecha="dd/mm/aaaa" inputmode="numeric" placeholder="dd/mm/aaaa" /></label>
+      <label>Hasta <input [(ngModel)]="hastaTxt" appMascaraFecha="dd/mm/aaaa" inputmode="numeric" placeholder="dd/mm/aaaa" /></label>
+      <button type="button" class="btn btn-chico" (click)="aplicarRango()">Aplicar</button>
+    </div>
+  </div>
+  @if (errorRango()) {
+    <p class="aviso error">{{ errorRango() }}</p>
+  }
+
+  @if (cargando()) {
+    <p class="suave">Cargando reporte…</p>
+  } @else {
+    <div class="kpis">
+      <div><span>Facturación</span><strong>{{ totalFacturacion() | pesos }}</strong></div>
+      <div><span>Entradas vendidas</span><strong>{{ totalEntradas() }}</strong></div>
+      <div><span>Compras</span><strong>{{ totalPedidos() }}</strong></div>
+      <div><span>Ticket promedio</span><strong>{{ ticketPromedio() | pesos }}</strong></div>
+    </div>
+
+    <h2>Facturación diaria</h2>
+    <!-- Gráfico hecho con HTML/CSS: la altura de cada barra es el % respecto del mejor día -->
+    <div class="columnas" role="img" [attr.aria-label]="'Gráfico de facturación diaria, máximo ' + (maxFacturacion() | pesos)">
+      @for (f of filas(); track f.fecha) {
+        <div class="columna" [title]="diaCorto(f.fecha) + ': ' + (f.facturacion | pesos)">
+          <div class="pista-v"><div class="relleno-v" [style.height.%]="(f.facturacion / maxFacturacion()) * 100"></div></div>
+          <span class="dia-col">{{ diaCorto(f.fecha) }}</span>
+        </div>
+      }
+    </div>
+
+    <div class="titulo-fila">
+      <h2>Facturación por día</h2>
+      <div class="acciones">
+        <button type="button" class="btn btn-chico" (click)="exportarPdf()">Exportar PDF</button>
+        <button type="button" class="btn btn-chico" (click)="exportarExcel()">Exportar Excel</button>
+      </div>
+    </div>
+    <div class="tabla-scroll alto">
+      <table class="tabla">
+        <thead>
+          <tr><th>Fecha</th><th class="num">Compras</th><th class="num">Entradas</th><th class="num">Facturación</th></tr>
+        </thead>
+        <tbody>
+          @for (f of filasTabla(); track f.fecha) {
+            <tr [class.cero]="!f.pedidos">
+              <td>{{ dia(f.fecha) }}</td>
+              <td class="num">{{ f.pedidos }}</td>
+              <td class="num">{{ f.entradas }}</td>
+              <td class="num">{{ f.facturacion | pesos }}</td>
+            </tr>
+          }
+        </tbody>
+        <tfoot>
+          <tr>
+            <th>Total</th>
+            <th class="num">{{ totalPedidos() }}</th>
+            <th class="num">{{ totalEntradas() }}</th>
+            <th class="num">{{ totalFacturacion() | pesos }}</th>
+          </tr>
+        </tfoot>
+      </table>
+    </div>
+    <p class="suave chico">El PDF y el Excel incluyen también las películas más vistas y los productos del candy de este rango.</p>
+  }
+</section>
+
+<div class="dos">
+  <section class="panel">
+    <h2>Películas más vistas de la semana</h2>
+    <p class="suave chico periodo">{{ etiquetaSemana }}</p>
+    <div class="barras" role="img" [attr.aria-label]="'Gráfico de películas más vistas de la semana: ' + descripcion(vistasSemana())">
+      @for (v of vistasSemana().slice(0, 8); track v.id; let i = $index) {
+        <div class="barra-fila">
+          <span class="nombre">{{ v.nombre }}</span>
+          <div class="pista"><div class="relleno" [class.primera]="i === 0" [style.width.%]="porcentaje(v.cantidad, vistasSemana())"></div></div>
+          <span class="valor">{{ v.cantidad }}</span>
+        </div>
+      } @empty {
+        <p class="suave">No hubo funciones con entradas vendidas en este período.</p>
+      }
+    </div>
+  </section>
+
+  <section class="panel">
+    <h2>Películas más vistas del mes</h2>
+    <p class="suave chico periodo">{{ etiquetaMes }}</p>
+    <div class="barras" role="img" [attr.aria-label]="'Gráfico de películas más vistas del mes: ' + descripcion(vistasMes())">
+      @for (v of vistasMes().slice(0, 8); track v.id; let i = $index) {
+        <div class="barra-fila">
+          <span class="nombre">{{ v.nombre }}</span>
+          <div class="pista"><div class="relleno" [class.primera]="i === 0" [style.width.%]="porcentaje(v.cantidad, vistasMes())"></div></div>
+          <span class="valor">{{ v.cantidad }}</span>
+        </div>
+      } @empty {
+        <p class="suave">No hubo funciones con entradas vendidas en este período.</p>
+      }
+    </div>
+  </section>
+</div>
+
+<section class="panel">
+  <h2>Candy bar</h2>
+  @if (productos()[0]; as top) {
+    <div class="candy">
+      <div class="estrella">
+        <span>Producto más vendido del período</span>
+        <strong>{{ top.nombre }}</strong>
+        <em>{{ top.cantidad }} unidades</em>
+      </div>
+      <div class="barras" role="img" [attr.aria-label]="'Gráfico de productos más vendidos: ' + descripcion(productos())">
+        @for (p of productos().slice(0, 6); track p.id; let i = $index) {
+          <div class="barra-fila">
+            <span class="nombre">{{ p.nombre }}</span>
+            <div class="pista"><div class="relleno" [class.primera]="i === 0" [style.width.%]="porcentaje(p.cantidad, productos())"></div></div>
+            <span class="valor">{{ p.cantidad }}</span>
+          </div>
+        }
+      </div>
+    </div>
+  } @else {
+    <p class="suave">Sin ventas de candy en el rango elegido.</p>
+  }
+  <p class="suave chico">Incluye productos sueltos, dentro de combos y canjeados con puntos. Usa el rango de fechas de arriba.</p>
+</section>

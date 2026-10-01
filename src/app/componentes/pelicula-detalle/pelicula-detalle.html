@@ -1,0 +1,139 @@
+@if (pelicula(); as p) {
+  <div class="contenedor pagina">
+    <div class="ficha">
+      <img class="poster" [src]="p.imagen_url" [alt]="'Póster de ' + p.titulo" appImagenRespaldo />
+      <div class="texto">
+        <h1>{{ p.titulo }}</h1>
+        <div class="datos">
+          <span class="etiqueta" [class.roja]="p.clasificacion !== 'ATP'">{{ p.clasificacion | clasificacion }}</span>
+          <span>{{ p.duracion_min | duracion }}</span>
+          <span>{{ p.generos.join(', ') }}</span>
+        </div>
+        @if (promedio(); as pr) {
+          <p class="puntaje">
+            <app-estrellas [valor]="pr.promedio" />
+            <strong>{{ pr.promedio.toFixed(1) }}</strong>
+            <span class="suave chico">({{ pr.cantidad }} {{ pr.cantidad === 1 ? 'reseña' : 'reseñas' }})</span>
+          </p>
+        }
+        <p class="sinopsis">{{ p.sinopsis }}</p>
+        @if (venta().preventa) {
+          <p class="aviso">Preventa abierta hasta el estreno ({{ p.fecha_estreno | fechaAR }}): entradas a {{ p.preventa_precio | pesos }}.</p>
+        }
+        @if (p.clasificacion !== 'ATP') {
+          <p class="aviso error">
+            Película {{ p.clasificacion }}. Las cuentas de menores de {{ minima() }} años no pueden comprar entradas y en la entrada
+            consta que debe asistir un adulto.
+          </p>
+        }
+      </div>
+    </div>
+
+    <section id="funciones" class="bloque">
+      <h2>Funciones</h2>
+      @if (!venta().abierta) {
+        <div class="vacio">
+          <p>
+            La venta abre el
+            @if (venta().abreEl; as abre) {
+              {{ abre | dia }}.
+            } @else {
+              día del estreno.
+            }
+          </p>
+          @if (auth.usuario()) {
+            <button type="button" class="btn btn-primario" (click)="alternarAlerta(p.id)">
+              {{ notificaciones.tieneAlerta(p.id) ? 'Alerta activada' : 'Avisarme cuando salga a la venta' }}
+            </button>
+          } @else {
+            <a class="btn" routerLink="/ingresar" [queryParams]="{ volver: '/pelicula/' + p.id }">Ingresá para activar una alerta</a>
+          }
+        </div>
+      } @else if (bloqueadaPorEdad()) {
+        <div class="vacio"><p>Tu cuenta no puede comprar entradas para una película {{ p.clasificacion }}.</p></div>
+      } @else if (!dias().length) {
+        <div class="vacio"><p>No hay funciones programadas por ahora.</p></div>
+      } @else {
+        <div class="dias" role="tablist" aria-label="Día de la función">
+          @for (d of dias(); track d.fecha) {
+            <button
+              type="button"
+              role="tab"
+              class="dia"
+              [class.activo]="d.fecha === diaActivo().fecha"
+              [attr.aria-selected]="d.fecha === diaActivo().fecha"
+              (click)="diaElegido.set(d.fecha)"
+            >
+              <span>{{ d.etiqueta }}</span>
+              <small>{{ d.sub }}</small>
+              @if (feriados().get(d.fecha); as feriado) {
+                <em class="feriado" [title]="feriado">Feriado</em>
+              }
+            </button>
+          }
+        </div>
+        <div class="horarios" role="tabpanel">
+          @for (f of diaActivo().funciones; track f.id) {
+            <a class="horario" [routerLink]="['/comprar', f.id]">
+              <strong>{{ f.inicio | hora }}</strong>
+              <span>{{ f.formato }} · {{ f.idioma === 'castellano' ? 'Castellano' : 'Subtitulada' }}</span>
+              <small>{{ f.salas.nombre }} · desde {{ (venta().preventa ? p.preventa_precio : f.precio) | pesos }}</small>
+            </a>
+          }
+        </div>
+      }
+    </section>
+
+    <section class="bloque resenas">
+      <h2>Reseñas</h2>
+      @if (auth.usuario()) {
+        <form class="panel form-resena" (ngSubmit)="guardarResena(p.id)">
+          <h3>{{ miResena() ? 'Tu reseña' : 'Contanos qué te pareció' }}</h3>
+          <app-estrellas [editable]="true" [(valor)]="estrellas" etiqueta="Tu calificación" />
+          <div class="campo">
+            <label for="comentario">Comentario corto</label>
+            <textarea
+              id="comentario"
+              name="comentario"
+              [ngModel]="comentario()"
+              (ngModelChange)="comentario.set($event)"
+              maxlength="280"
+              placeholder="Sin spoilers, por favor"
+            ></textarea>
+            <span class="ayuda">{{ comentario().length }}/280</span>
+          </div>
+          <button type="submit" class="btn btn-primario" [disabled]="!estrellas() || guardando()">
+            {{ miResena() ? 'Actualizar reseña' : 'Publicar reseña' }}
+          </button>
+        </form>
+      } @else {
+        <p class="suave">
+          <a routerLink="/ingresar" [queryParams]="{ volver: '/pelicula/' + p.id }">Ingresá</a> para calificar esta película.
+        </p>
+      }
+      <ul class="lista-resenas">
+        @for (r of resenas(); track r.id) {
+          <li>
+            <div class="cabeza">
+              <strong>{{ r.autor }}</strong>
+              <app-estrellas [valor]="r.estrellas" />
+              <span class="suave chico">{{ r.fecha | fechaAR }}</span>
+            </div>
+            @if (r.comentario) {
+              <p>{{ r.comentario }}</p>
+            }
+          </li>
+        } @empty {
+          <li class="suave">Todavía no hay reseñas. Sé la primera persona en opinar.</li>
+        }
+      </ul>
+    </section>
+  </div>
+} @else if (cargando()) {
+  <div class="contenedor pagina"><p class="suave">Buscando la película…</p></div>
+} @else {
+  <div class="contenedor pagina">
+    <p class="suave">No se pudo cargar la película.</p>
+    <a routerLink="/cartelera" class="btn">Volver a la cartelera</a>
+  </div>
+}

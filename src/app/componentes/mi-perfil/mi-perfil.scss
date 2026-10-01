@@ -1,0 +1,12 @@
+.grilla { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px; }
+.ancho { grid-column: 1 / -1; }
+h2 { margin: 0 0 14px; font-size: var(--t-xl); }
+dl { display: grid; grid-template-columns: 1fr 1fr; gap: 12px 20px; margin: 0; }
+dt { font-size: var(--t-xs); color: var(--humo); }
+dd { margin: 0; font-weight: 600; }
+.titulo-fila { display: flex; justify-content: space-between; align-items: center; gap: 10px; }
+.fila { display: flex; gap: 8px; }
+.noti { display: flex; gap: 12px; align-items: baseline; padding: 10px 0; margin: 0; border-bottom: 1px solid var(--linea); max-width: none; }
+.noti span { flex: 1; }
+.noti small { color: var(--humo); }
+.noti.nueva span::before { content: '●'; color: var(--laton); margin-right: 8px; }

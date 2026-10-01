@@ -1,0 +1,16 @@
+<div class="contenedor pagina admin">
+  <aside class="lateral" aria-label="Secciones de administración">
+    <p class="rotulo">Administración</p>
+    @if (auth.usuario(); as u) {
+      <p class="suave chico quien">{{ u.nombre }} {{ u.apellido }}</p>
+    }
+    <nav>
+      @for (s of secciones; track s.ruta) {
+        <a [routerLink]="s.ruta" routerLinkActive="activa">{{ s.nombre }}</a>
+      }
+    </nav>
+  </aside>
+  <section class="cuerpo">
+    <router-outlet />
+  </section>
+</div>

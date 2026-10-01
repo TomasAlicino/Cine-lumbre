@@ -1,0 +1,54 @@
+<p class="suave chico">
+  Podés cancelar una compra hasta {{ config.config().horas_limite_cancelacion }} horas antes de la función:
+  no se devuelve dinero, el importe vuelve como crédito en tu cuenta.
+</p>
+
+@if (cargando()) {
+  <p class="suave" aria-live="polite">Cargando tus compras…</p>
+} @else {
+  <div class="lista">
+    @for (p of pedidos(); track p.codigo) {
+      <article class="compra" [class.cancelada]="p.estado === 'cancelada'" [class.pasada]="pasada(p)">
+        <div class="fecha">
+          <span class="dia">{{ p.funciones.inicio | dia: 'corto' }}</span>
+          <span class="hora">{{ p.funciones.inicio | hora }}</span>
+        </div>
+        <div class="info">
+          <h3>{{ p.funciones.peliculas.titulo }}</h3>
+          <p class="suave chico">
+            {{ p.funciones.salas.nombre }} · {{ p.funciones.formato }} · Butacas {{ p.butacas.join(', ') }}
+            @if (p.items.length) {
+              · Candy: {{ resumenItems(p) }}
+            }
+          </p>
+          <p class="chico">
+            <code>{{ p.codigo }}</code> · {{ p.total + p.credito_usado | pesos }}
+            @if (p.estado === 'cancelada') {
+              <span class="etiqueta roja">Cancelada</span>
+            } @else if (p.entrada_validada_en) {
+              <span class="etiqueta ok">Usada</span>
+            } @else if (pasada(p)) {
+              <span class="etiqueta">Vencida</span>
+            } @else {
+              <span class="etiqueta laton">Pagada</span>
+            }
+          </p>
+        </div>
+        <div class="acciones">
+          <a class="btn btn-chico" [routerLink]="['/entrada', p.codigo]">Ver entrada</a>
+          @if (p.estado === 'pagada') {
+            <button type="button" class="btn btn-chico" (click)="descargar(p)">PDF</button>
+          }
+          @if (puedeCancelar(p)) {
+            <button type="button" class="btn btn-chico btn-peligro" (click)="cancelar(p)">Cancelar</button>
+          }
+        </div>
+      </article>
+    } @empty {
+      <div class="vacio">
+        <p>Todavía no compraste entradas.</p>
+        <a routerLink="/cartelera" class="btn btn-primario">Ver cartelera</a>
+      </div>
+    }
+  </div>
+}

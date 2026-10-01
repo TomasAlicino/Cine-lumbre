@@ -1,0 +1,10 @@
+:host { display: grid; gap: 20px; }
+h2 { margin: 0 0 8px; font-size: var(--t-xl); }
+.resumen { display: flex; gap: 24px; align-items: center; flex-wrap: wrap; }
+.resumen div { display: flex; flex-direction: column; }
+.resumen p { flex: 1; min-width: 220px; margin: 0; }
+.total { font: 800 var(--t-3xl) / 1 var(--f-display); color: var(--laton); }
+.recompensas { display: grid; grid-template-columns: repeat(auto-fill, minmax(190px, 1fr)); gap: 12px; margin: 16px 0 20px; }
+.recompensa { display: flex; flex-direction: column; gap: 4px; padding: 14px; border: 1px solid var(--linea); border-radius: var(--r-m); align-items: flex-start; }
+.recompensa.alcanza { border-color: var(--laton); }
+.costo { font: 800 var(--t-xl) / 1 var(--f-display); color: var(--laton); }

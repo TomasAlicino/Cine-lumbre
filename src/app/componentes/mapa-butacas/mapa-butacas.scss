@@ -1,0 +1,35 @@
+:host { display: block; }
+.sala { position: relative; }
+.pantalla { position: relative; height: 56px; margin: 0 6% 10px; }
+.pantalla::before { content: ''; position: absolute; inset: 0 0 auto; height: 14px; border-radius: 50% / 100% 100% 0 0; border-top: 3px solid var(--pantalla); box-shadow: 0 -6px 26px rgba(243, 239, 228, 0.35); }
+.pantalla::after { content: ''; position: absolute; left: 4%; right: 4%; top: 10px; height: 46px; background: radial-gradient(60% 100% at 50% 0, rgba(243, 239, 228, 0.12), transparent 70%); }
+.pantalla span { position: absolute; top: 18px; left: 0; right: 0; text-align: center; font: 700 var(--t-s) / 1 var(--f-display); letter-spacing: 0.3em; color: var(--humo); }
+.scroll { overflow-x: auto; padding-bottom: 8px; }
+.scroll:focus-visible { outline: 2px solid var(--laton); }
+.filas { display: flex; flex-direction: column; gap: 5px; width: max-content; margin: 0 auto; padding: 0 4px; }
+.fila { display: flex; align-items: center; justify-content: center; gap: 18px; }
+.fila.accesible { margin-block: 12px; }
+.rotulo { width: 24px; text-align: center; font: 700 var(--t-s) / 1 var(--f-display); color: var(--humo); }
+.bloque { display: flex; gap: 4px; justify-content: center; }
+.fila.accesible .bloque { gap: 12px; }
+.bloque:not(.centro) { width: calc(4 * 24px + 3 * 4px); }
+.fila.accesible .bloque:not(.centro) { width: calc(4 * 24px + 3 * 4px); }
+.bloque.centro { width: calc(20 * 24px + 19 * 4px); }
+
+.butaca { display: inline-flex; align-items: center; justify-content: center; width: 24px; height: 24px; padding: 0; border: 1.5px solid var(--humo); border-radius: 7px 7px 3px 3px; background: transparent; color: transparent; font: 600 10px / 1 var(--f-texto); cursor: pointer; transition: background-color .12s, transform .12s; }
+.fila.accesible .butaca { width: 30px; }
+.butaca:hover:not(:disabled) { color: var(--pantalla); transform: translateY(-2px); }
+.butaca.accesible { border-color: var(--acceso); }
+.butaca.vip { border-color: var(--terciopelo-claro); background: rgba(179, 48, 63, 0.18); }
+.butaca.elegida { background: var(--laton); border-color: var(--laton); color: var(--noche); }
+.butaca.vendida { background: var(--noche-3); border-color: var(--noche-3); cursor: not-allowed; }
+.butaca.ajena { border-style: dashed; background: repeating-linear-gradient(45deg, transparent 0 3px, rgba(154, 163, 191, 0.35) 3px 5px); cursor: not-allowed; }
+.butaca.fuera { visibility: hidden; }
+.admin .butaca.fuera { visibility: visible; border-color: var(--noche-3); background: transparent; opacity: .5; }
+.admin .butaca.fuera::after { content: '×'; color: var(--humo); font-size: 14px; }
+.admin .butaca { cursor: pointer; }
+
+.leyenda { list-style: none; display: flex; flex-wrap: wrap; justify-content: center; gap: 10px 20px; margin: 18px 0 0; padding: 0; font-size: var(--t-xs); color: var(--humo); }
+.leyenda li { display: flex; align-items: center; gap: 8px; }
+.leyenda i { display: inline-block; width: 16px; height: 16px; cursor: default; }
+.leyenda i.fuera { visibility: visible; opacity: .5; border-color: var(--noche-3); }

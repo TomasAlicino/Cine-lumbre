@@ -1,0 +1,10 @@
+:host { display: grid; gap: 20px; }
+h2 { margin: 0 0 14px; font-size: var(--t-xl); }
+.grilla { display: grid; gap: 20px; }
+.porcentajes { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+.otro { display: inline-flex; align-items: center; gap: 6px; font-size: var(--t-s); margin-left: 8px; }
+.otro input[type='number'] { width: 80px; }
+.error { color: var(--terciopelo-claro); }
+.pie { display: flex; gap: 10px; }
+.reglas { margin: 0; padding-left: 18px; }
+.reglas li { margin-bottom: 6px; }

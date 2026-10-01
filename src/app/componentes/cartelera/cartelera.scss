@@ -1,0 +1,4 @@
+.filtros { display: grid; gap: 20px; padding: 20px; margin-bottom: 20px; background: var(--noche-2); border: 1px solid var(--linea); border-radius: var(--r-m); }
+.buscador { max-width: 480px; }
+.grilla { display: grid; grid-template-columns: repeat(auto-fill, minmax(170px, 1fr)); gap: 32px 20px; margin-top: 12px; }
+.vacio { grid-column: 1 / -1; }

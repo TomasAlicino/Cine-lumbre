@@ -1,0 +1,56 @@
+<header class="cabecera-pagina">
+  <div>
+    <h1>Salas</h1>
+    <p>Todas las salas tienen la misma distribución. Acá podés activarlas, renombrarlas y marcar butacas fuera de servicio.</p>
+  </div>
+  <button type="button" class="btn btn-primario" (click)="nueva()">Nueva sala</button>
+</header>
+
+<div class="layout">
+  <aside class="panel lista" aria-label="Salas">
+    @if (cargando()) {
+      <p class="suave">Cargando salas…</p>
+    } @else {
+      @for (s of salas(); track s.id) {
+        <button type="button" class="sala" [class.activa]="sel()?.id === s.id" [attr.aria-pressed]="sel()?.id === s.id" (click)="elegir(s)">
+          <strong>{{ s.nombre }}</strong>
+          <span class="chico">{{ s.activa ? 'Activa' : 'Inactiva' }} · {{ total - s.butacas_deshabilitadas.length }} butacas</span>
+        </button>
+      } @empty {
+        <p class="suave">No hay salas.</p>
+      }
+    }
+  </aside>
+
+  @if (abierto()) {
+    <section class="panel">
+      <h2>{{ sel() ? 'Editar sala' : 'Nueva sala' }}</h2>
+      <form class="form-grilla" [formGroup]="form" (ngSubmit)="guardar()" novalidate>
+        <div class="campo">
+          <label for="nombre">Nombre</label>
+          <input id="nombre" formControlName="nombre" maxlength="30" />
+          @if (form.controls.nombre.touched && form.controls.nombre.invalid) {
+            <span class="error">Poné un nombre a la sala.</span>
+          }
+        </div>
+        <label class="check campo"><input type="checkbox" formControlName="activa" /> Sala activa (se usa en la asignación automática)</label>
+      </form>
+      <p class="suave chico ayuda">
+        Tocá una butaca para ponerla o sacarla de servicio (rotas, en reparación, etc.). Las que estén fuera de servicio no se venden.
+        Fuera de servicio: {{ fueraDeServicio().length }}.
+      </p>
+      <app-mapa-butacas modo="admin" [fueraDeServicio]="fueraDeServicio()" (butacaClick)="alternar($event)" />
+      <div class="pie">
+        <button type="button" class="btn btn-primario" (click)="guardar()" [disabled]="guardando()">{{ guardando() ? 'Guardando...' : 'Guardar' }}</button>
+        @if (sel()) {
+          <button type="button" class="btn btn-peligro" (click)="eliminar()">Eliminar sala</button>
+        }
+        @if (fueraDeServicio().length) {
+          <button type="button" class="btn-texto" (click)="habilitarTodas()">Habilitar todas</button>
+        }
+      </div>
+    </section>
+  } @else {
+    <div class="vacio"><p>Elegí una sala para editarla.</p></div>
+  }
+</div>

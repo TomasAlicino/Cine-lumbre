@@ -1,0 +1,18 @@
+.admin { display: grid; grid-template-columns: 220px 1fr; gap: 32px; align-items: start; }
+.lateral { position: sticky; top: 88px; border: 1px solid var(--linea); border-radius: var(--r-m); background: var(--noche-2); padding: 16px; }
+.rotulo { font: 800 var(--t-l) / 1 var(--f-display); color: var(--laton); margin: 0 0 4px; text-transform: uppercase; letter-spacing: .04em; }
+.quien { margin: 0 0 12px; }
+nav { display: flex; flex-direction: column; gap: 2px; }
+nav a { padding: 8px 12px; border-radius: var(--r-s); color: var(--humo); text-decoration: none; font-weight: 600; border-left: 3px solid transparent; }
+nav a:hover { color: var(--pantalla); background: var(--noche-3); }
+nav a.activa { color: var(--pantalla); background: var(--noche-3); border-left-color: var(--laton); }
+.cuerpo { min-width: 0; }
+
+@media (max-width: 860px) {
+  .admin { grid-template-columns: 1fr; gap: 16px; }
+  .lateral { position: static; padding: 10px; }
+  .quien { display: none; }
+  nav { flex-direction: row; overflow-x: auto; }
+  nav a { white-space: nowrap; border-left: 0; border-bottom: 3px solid transparent; }
+  nav a.activa { border-bottom-color: var(--laton); }
+}

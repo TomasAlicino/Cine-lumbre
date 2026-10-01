@@ -1,0 +1,65 @@
+<section class="panel resumen">
+  <div>
+    <span class="suave chico">Tus puntos</span>
+    <strong class="total">{{ puntos().toLocaleString('es-AR') }}</strong>
+  </div>
+  <p class="suave chico">
+    Sumás <strong>1 punto por cada peso</strong> que pagás (el crédito y los descuentos no suman).
+    Si cancelás una compra, los puntos que te dio se descuentan.
+  </p>
+</section>
+
+@if (cargando()) {
+  <p class="suave" aria-live="polite">Cargando recompensas…</p>
+} @else {
+  <section class="panel">
+    <h2>Recompensas</h2>
+    <p class="suave chico">
+      Los puntos se canjean al comprar: elegí la recompensa en el último paso de la compra.
+      Son personales y no se pueden transferir.
+    </p>
+    <div class="recompensas">
+      @for (r of recompensas(); track r.id) {
+        <div class="recompensa" [class.alcanza]="puntos() >= r.costo_puntos">
+          <strong>{{ r.nombre }}</strong>
+          <span class="costo">{{ r.costo_puntos.toLocaleString('es-AR') }} pts</span>
+          @if (puntos() >= r.costo_puntos) {
+            <span class="etiqueta ok">Te alcanza</span>
+          } @else {
+            <span class="suave chico">Te faltan {{ (r.costo_puntos - puntos()).toLocaleString('es-AR') }}</span>
+          }
+        </div>
+      } @empty {
+        <p class="suave">Por ahora no hay recompensas activas.</p>
+      }
+    </div>
+    <a routerLink="/cartelera" class="btn btn-primario">Comprar y canjear</a>
+  </section>
+
+  <section class="panel">
+    <h2>Historial de canjes</h2>
+    <div class="tabla-scroll">
+      <table class="tabla">
+        <thead>
+          <tr><th>Fecha</th><th>Recompensa</th><th class="num">Puntos</th><th></th></tr>
+        </thead>
+        <tbody>
+          @for (c of canjes(); track c.id) {
+            <tr>
+              <td>{{ c.fecha | fechaAR }}</td>
+              <td>{{ c.nombre }}</td>
+              <td class="num">−{{ c.puntos.toLocaleString('es-AR') }}</td>
+              <td>
+                @if (c.pedido_codigo) {
+                  <a [routerLink]="['/entrada', c.pedido_codigo]">Ver compra</a>
+                }
+              </td>
+            </tr>
+          } @empty {
+            <tr><td colspan="4" class="suave">Todavía no canjeaste puntos.</td></tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  </section>
+}

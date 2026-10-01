@@ -1,0 +1,26 @@
+<div class="contenedor pagina">
+  <div class="cabecera-pagina">
+    <div>
+      <h1>Próximamente</h1>
+      <p>Estrenos de las próximas semanas. Activá una alerta y te avisamos cuando se puedan comprar entradas.</p>
+    </div>
+  </div>
+  @if (cargando()) {
+    <p class="suave">Cargando estrenos…</p>
+  } @else {
+    <div class="grilla">
+      @for (p of proximas(); track p.id) {
+        <app-pelicula-card
+          [pelicula]="p"
+          modo="proximamente"
+          [mostrarAlerta]="true"
+          [preventa]="enPreventa(p)"
+          [alertaActiva]="notificaciones.tieneAlerta(p.id)"
+          (alternarAlerta)="alternar($event)"
+        />
+      } @empty {
+        <div class="vacio"><p>No hay estrenos anunciados por ahora.</p></div>
+      }
+    </div>
+  }
+</div>

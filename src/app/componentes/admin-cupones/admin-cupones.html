@@ -1,0 +1,102 @@
+<header class="cabecera-pagina">
+  <div>
+    <h1>Cupones</h1>
+    <p>Descuentos por código. Podés limitarlos a clientes registrados de más de cierta edad (por ejemplo, mayores de 50).</p>
+  </div>
+</header>
+
+<section class="panel bienvenida">
+  <h2>Cupón de bienvenida</h2>
+  <p class="suave chico">
+    Cada cliente registrado recibe automáticamente un <strong>{{ config().porcentaje_primera_compra }}%</strong> de descuento en su
+    primera compra, sin ingresar ningún código. El porcentaje se cambia en
+    <a routerLink="/admin/configuracion">Configuración</a>. Se aplica un solo cupón por compra.
+  </p>
+  @if (!cargando()) {
+    <p class="suave chico">Usado en {{ usosDe(codigoBienvenida) }} compras pagadas.</p>
+  }
+</section>
+
+@if (mostrarForm()) {
+  <form class="panel" [formGroup]="form" (ngSubmit)="guardar()">
+    <h2>{{ editando() ? 'Editar cupón' : 'Nuevo cupón' }}</h2>
+    <div class="form-grilla">
+      <div class="campo">
+        <label for="cc">Código</label>
+        <input id="cc" formControlName="codigo" maxlength="20" class="mayusculas" />
+        @if (form.controls.codigo.touched && form.controls.codigo.invalid) {
+          <span class="error">El código debe tener de 3 a 20 letras o números, sin espacios.</span>
+        }
+      </div>
+      <div class="campo">
+        <label for="cp">Descuento (%)</label>
+        <input id="cp" type="number" min="1" max="100" formControlName="porcentaje" />
+        @if (form.controls.porcentaje.touched && form.controls.porcentaje.invalid) {
+          <span class="error">El descuento debe estar entre 1 y 100%.</span>
+        }
+      </div>
+      <div class="campo">
+        <span class="etiqueta-campo">¿Quién lo puede usar?</span>
+        <label class="check"><input type="checkbox" formControlName="limitarEdad" /> Solo para mayores de…</label>
+      </div>
+      @if (form.controls.limitarEdad.value) {
+        <div class="campo">
+          <label for="ce">Más de (años)</label>
+          <input id="ce" type="number" min="1" max="100" formControlName="edad" />
+          @if (form.controls.edad.touched && form.controls.edad.invalid) {
+            <span class="error">Ingresá una edad entre 1 y 100.</span>
+          }
+        </div>
+      }
+      <label class="check campo"><input type="checkbox" formControlName="activo" /> Vigente</label>
+    </div>
+    <div class="pie">
+      <button type="submit" class="btn btn-primario">Guardar</button>
+      <button type="button" class="btn" (click)="cancelar()">Cancelar</button>
+    </div>
+  </form>
+}
+
+<section class="panel">
+  <div class="titulo-fila">
+    <h2>Cupones</h2>
+    <button type="button" class="btn btn-chico btn-primario" (click)="nuevo()">Nuevo cupón</button>
+  </div>
+  @if (cargando()) {
+    <p class="vacio">Cargando…</p>
+  } @else {
+    <div class="tabla-scroll">
+      <table class="tabla">
+        <thead>
+          <tr><th>Código</th><th class="num">Descuento</th><th>Restricción</th><th class="num">Usos</th><th>Estado</th><th></th></tr>
+        </thead>
+        <tbody>
+          @for (c of cupones(); track c.id) {
+            <tr>
+              <td><code>{{ c.codigo }}</code></td>
+              <td class="num">{{ c.porcentaje }}%</td>
+              <td>{{ c.solo_mayores_de !== null ? 'Más de ' + c.solo_mayores_de + ' años' : 'Todos' }}</td>
+              <td class="num">{{ usosDe(c.codigo) }}</td>
+              <td>
+                @if (c.activo) {
+                  <span class="etiqueta ok">Vigente</span>
+                } @else {
+                  <span class="etiqueta">Pausado</span>
+                }
+              </td>
+              <td>
+                <div class="acciones">
+                  <button type="button" class="btn btn-chico" (click)="editar(c)">Editar</button>
+                  <button type="button" class="btn btn-chico btn-peligro" (click)="eliminar(c)">Borrar</button>
+                </div>
+              </td>
+            </tr>
+          } @empty {
+            <tr><td colspan="6" class="suave">No hay cupones.</td></tr>
+          }
+        </tbody>
+      </table>
+    </div>
+    <p class="suave chico">Los usos cuentan solo compras pagadas (las canceladas no suman).</p>
+  }
+</section>

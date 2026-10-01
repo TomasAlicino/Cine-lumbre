@@ -1,0 +1,5 @@
+:host { display: grid; gap: 20px; }
+h2 { margin: 0 0 14px; font-size: var(--t-xl); }
+.titulo-fila { display: flex; justify-content: space-between; align-items: center; gap: 10px; margin-bottom: 12px; flex-wrap: wrap; }
+.titulo-fila h2 { margin: 0; }
+.pie { display: flex; gap: 10px; margin-top: 18px; }

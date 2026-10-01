@@ -1,0 +1,44 @@
+:host { display: grid; gap: 20px; }
+h2 { margin: 0 0 12px; font-size: var(--t-xl); }
+.barra { display: flex; flex-wrap: wrap; gap: 14px; justify-content: space-between; align-items: flex-end; margin-bottom: 18px; }
+.rango { display: flex; gap: 10px; align-items: flex-end; flex-wrap: wrap; }
+.rango label { display: flex; flex-direction: column; font-size: var(--t-xs); color: var(--humo); gap: 4px; }
+.rango input { width: 140px; }
+.kpis { display: grid; grid-template-columns: repeat(auto-fit, minmax(170px, 1fr)); gap: 12px; margin-bottom: 22px; }
+.kpis div { padding: 14px 16px; border-radius: var(--r-m); background: var(--noche); border: 1px solid var(--linea); display: flex; flex-direction: column; }
+.kpis span { font-size: var(--t-xs); color: var(--humo); }
+.kpis strong { font: 800 var(--t-2xl) / 1.1 var(--f-display); color: var(--laton); }
+.titulo-fila { display: flex; justify-content: space-between; align-items: center; gap: 10px; flex-wrap: wrap; margin-bottom: 12px; }
+.titulo-fila h2 { margin: 0; }
+.acciones { display: flex; gap: 8px; }
+.alto { max-height: 380px; overflow-y: auto; }
+tr.cero td { color: var(--humo); }
+tfoot th { color: var(--pantalla); }
+
+/* Gráfico de columnas de la facturación diaria */
+.columnas { display: flex; gap: 4px; align-items: stretch; height: 180px; overflow-x: auto; padding-bottom: 4px; margin-bottom: 24px; }
+.columna { flex: 1 0 18px; display: flex; flex-direction: column; gap: 4px; min-width: 18px; }
+.pista-v { flex: 1; display: flex; align-items: flex-end; background: var(--noche); border-radius: 3px; overflow: hidden; }
+.relleno-v { width: 100%; background: var(--laton); border-radius: 3px 3px 0 0; transition: height .4s ease; }
+.dia-col { font-size: 10px; color: var(--humo); text-align: center; white-space: nowrap; overflow: hidden; }
+
+.dos { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+.periodo { margin: -6px 0 16px; text-transform: capitalize; }
+.barras { display: flex; flex-direction: column; gap: 10px; }
+.barra-fila { display: grid; grid-template-columns: 150px 1fr 40px; gap: 10px; align-items: center; font-size: var(--t-s); }
+.nombre { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.pista { height: 22px; background: var(--noche); border-radius: 3px; overflow: hidden; }
+.relleno { height: 100%; background: var(--acceso); border-radius: 3px; transition: width .4s ease; }
+.relleno.primera { background: var(--laton); }
+.valor { text-align: right; font-variant-numeric: tabular-nums; font-weight: 700; }
+
+.candy { display: grid; grid-template-columns: 1fr 1.4fr; gap: 20px; align-items: center; margin-bottom: 12px; }
+.estrella { display: flex; flex-direction: column; padding: 18px; border-radius: var(--r-m); background: var(--pantalla); color: var(--noche); }
+.estrella span { font-size: var(--t-xs); font-weight: 600; color: #5a6380; }
+.estrella strong { font: 900 var(--t-3xl) / 1 var(--f-display); text-transform: uppercase; margin: 4px 0; }
+.estrella em { font-style: normal; color: var(--terciopelo); font-weight: 700; }
+
+@media (max-width: 900px) {
+  .dos, .candy { grid-template-columns: 1fr; }
+  .barra-fila { grid-template-columns: 110px 1fr 36px; }
+}

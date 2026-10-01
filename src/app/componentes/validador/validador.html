@@ -1,0 +1,87 @@
+<div class="contenedor pagina">
+  <header class="cabecera-pagina">
+    <div>
+      <h1>Validar entradas</h1>
+      <p>Elegí dónde estás, escaneá el QR o escribí el código. Cada QR se usa una sola vez en la sala y una sola vez en el candy.</p>
+    </div>
+  </header>
+
+  <div class="modos" role="radiogroup" aria-label="Puesto de validación">
+    <button type="button" role="radio" [attr.aria-checked]="modo() === 'sala'" [class.activo]="modo() === 'sala'" (click)="cambiarModo('sala')">
+      <strong>Puerta de sala</strong><span>Ingreso a la función</span>
+    </button>
+    <button type="button" role="radio" [attr.aria-checked]="modo() === 'candy'" [class.activo]="modo() === 'candy'" (click)="cambiarModo('candy')">
+      <strong>Candy bar</strong><span>Entrega de productos</span>
+    </button>
+  </div>
+
+  <div class="grilla">
+    <section class="panel">
+      <h2>Cámara</h2>
+      <div id="lector-qr" class="lector" [class.activo]="camaraActiva()"></div>
+      @if (errorCamara()) { <p class="aviso error">{{ errorCamara() }}</p> }
+      @if (camaraActiva()) {
+        <button type="button" class="btn btn-bloque" (click)="detenerCamara()">Apagar cámara</button>
+      } @else {
+        <button type="button" class="btn btn-primario btn-bloque" (click)="iniciarCamara()">Encender cámara</button>
+      }
+    </section>
+
+    <section class="panel">
+      <h2>Código manual</h2>
+      <form (ngSubmit)="validar(codigo())">
+        <label class="solo-lector" for="codigo">Código de la entrada</label>
+        <input
+          id="codigo"
+          name="codigo"
+          [ngModel]="codigo()"
+          (ngModelChange)="codigo.set(formatear($event))"
+          placeholder="LMB-XXXX-XXXX"
+          autocomplete="off"
+          spellcheck="false"
+          appAutofoco
+          class="codigo"
+        />
+        <button class="btn btn-primario btn-bloque" type="submit" [disabled]="codigo().length < 6 || validando()">
+          {{ validando() ? 'Validando…' : 'Validar' }}
+        </button>
+      </form>
+
+      @if (resultado(); as r) {
+        <div class="resultado" [class.ok]="r.ok" role="status" aria-live="assertive">
+          <span class="icono" aria-hidden="true">{{ r.ok ? '✓' : '✕' }}</span>
+          <div>
+            <strong>{{ r.titulo }}</strong>
+            <p>{{ r.detalle }}</p>
+            @if (r.pedido; as p) {
+              <dl>
+                <div><dt>Película</dt><dd>{{ p.funciones.peliculas.titulo }} ({{ p.funciones.peliculas.clasificacion }})</dd></div>
+                <div><dt>Función</dt><dd>{{ p.funciones.inicio | dia: 'corto' }} · {{ p.funciones.inicio | hora }} h · {{ p.funciones.salas.nombre }}</dd></div>
+                <div><dt>Butacas</dt><dd>{{ butacas(p) }}</dd></div>
+                @if (modo() === 'candy' || candy(p).length) {
+                  <!-- En la sala es informativo: el candy se retira aparte -->
+                  <div><dt>{{ modo() === 'candy' ? 'Entregar' : 'Candy' }}</dt><dd>{{ textoCandy(p) }}</dd></div>
+                }
+                <div><dt>Titular</dt><dd>{{ p.comprador_nombre }}</dd></div>
+              </dl>
+              @if (p.requiere_adulto && modo() === 'sala') {
+                <p class="adulto">Película {{ p.funciones.peliculas.clasificacion }}: controlar que asista un adulto.</p>
+              }
+            }
+          </div>
+        </div>
+      }
+    </section>
+  </div>
+
+  @if (historial().length) {
+    <section class="historial">
+      <h2>Últimas validaciones de este turno</h2>
+      <ul>
+        @for (h of historial(); track $index) {
+          <li [class.ok]="h.ok"><span>{{ h.hora }}</span> {{ h.codigo }} — {{ h.titulo }}</li>
+        }
+      </ul>
+    </section>
+  }
+</div>

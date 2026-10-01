@@ -1,0 +1,25 @@
+<div class="contenedor pagina">
+  @if (auth.usuario(); as u) {
+    <header class="cabecera-pagina">
+      <div>
+        <h1>Hola, {{ u.nombre }}</h1>
+        <p>Tus entradas, tu historial y tus beneficios.</p>
+      </div>
+      <div class="saldos">
+        <div><span>Puntos</span><strong>{{ u.puntos.toLocaleString('es-AR') }}</strong></div>
+        <div><span>Crédito</span><strong>{{ u.credito | pesos }}</strong></div>
+      </div>
+    </header>
+  }
+  <div class="cuenta">
+    <nav class="menu" aria-label="Secciones de mi cuenta">
+      <a routerLink="perfil" routerLinkActive="activa">Perfil</a>
+      <a routerLink="compras" routerLinkActive="activa">Mis compras</a>
+      <a routerLink="mis-peliculas" routerLinkActive="activa">Mis películas</a>
+      <a routerLink="puntos" routerLinkActive="activa">Puntos y canjes</a>
+    </nav>
+    <section class="contenido">
+      <router-outlet />
+    </section>
+  </div>
+</div>

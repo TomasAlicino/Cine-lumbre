@@ -1,0 +1,28 @@
+<article class="card">
+  <a [routerLink]="['/pelicula', pelicula().id]" class="poster" [attr.aria-label]="'Ver ' + pelicula().titulo">
+    <img [src]="pelicula().imagen_url" [alt]="'Póster de ' + pelicula().titulo" loading="lazy" appImagenRespaldo />
+    <span class="clasif" [class.adulto]="pelicula().clasificacion !== 'ATP'">{{ pelicula().clasificacion }}</span>
+    @if (preventa()) {
+      <span class="preventa">Preventa</span>
+    }
+  </a>
+  <div class="info">
+    <h3><a [routerLink]="['/pelicula', pelicula().id]">{{ pelicula().titulo }}</a></h3>
+    <p class="meta">
+      @if (modo() === 'proximamente') {
+        Estrena el {{ pelicula().fecha_estreno | fechaAR }}
+      } @else {
+        {{ pelicula().duracion_min | duracion }}
+        @if (promedio(); as p) {
+          <span class="nota" [attr.aria-label]="'Puntaje ' + p.promedio.toFixed(1) + ' de 5'">★ {{ p.promedio.toFixed(1) }}</span>
+        }
+      }
+    </p>
+    <p class="generos">{{ pelicula().generos.join(', ') }}</p>
+    @if (modo() === 'proximamente' && mostrarAlerta()) {
+      <button type="button" class="btn btn-chico" [class.btn-primario]="alertaActiva()" (click)="alternarAlerta.emit(pelicula().id)">
+        {{ alertaActiva() ? 'Te avisamos cuando salga' : 'Avisarme cuando salga a la venta' }}
+      </button>
+    }
+  </div>
+</article>

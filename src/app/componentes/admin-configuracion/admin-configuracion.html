@@ -1,0 +1,72 @@
+<header class="cabecera-pagina">
+  <div>
+    <h1>Configuración</h1>
+    <p>Reglas generales del cine.</p>
+  </div>
+</header>
+
+@if (cargando()) {
+  <p class="vacio">Cargando…</p>
+} @else {
+  <form [formGroup]="form" (ngSubmit)="guardar()" class="grilla">
+    <section class="panel">
+      <h2>Cupón de bienvenida</h2>
+      <p class="suave chico">Descuento que recibe cada cliente registrado en su primera compra.</p>
+      <div class="porcentajes">
+        @for (p of atajos; track p) {
+          <button
+            type="button"
+            class="chip"
+            [class.activo]="form.controls.porcentaje_primera_compra.value === p"
+            (click)="elegirPorcentaje(p)"
+          >{{ p }}%</button>
+        }
+        <label class="otro">
+          Otro
+          <input type="number" min="1" max="100" formControlName="porcentaje_primera_compra" aria-label="Porcentaje del cupón de bienvenida" />%
+        </label>
+      </div>
+      @if (form.controls.porcentaje_primera_compra.touched && form.controls.porcentaje_primera_compra.invalid) {
+        <p class="error chico">El porcentaje debe estar entre 1 y 100.</p>
+      }
+      <p class="suave chico">Actual: {{ config().porcentaje_primera_compra }}%</p>
+    </section>
+
+    <section class="panel">
+      <h2>Funciones y cancelaciones</h2>
+      <div class="form-grilla">
+        <div class="campo">
+          <label for="limpieza">Minutos de limpieza entre funciones</label>
+          <input id="limpieza" type="number" min="0" formControlName="minutos_limpieza" />
+          <span class="ayuda">Mínimo entre el fin de una función y el comienzo de la siguiente en la misma sala.</span>
+          @if (form.controls.minutos_limpieza.touched && form.controls.minutos_limpieza.invalid) {
+            <span class="error">Ingresá 0 o más minutos.</span>
+          }
+        </div>
+        <div class="campo">
+          <label for="cancelacion">Horas límite para cancelar</label>
+          <input id="cancelacion" type="number" min="0" formControlName="horas_limite_cancelacion" />
+          <span class="ayuda">Hasta cuántas horas antes de la función se puede cancelar; se devuelve como crédito.</span>
+          @if (form.controls.horas_limite_cancelacion.touched && form.controls.horas_limite_cancelacion.invalid) {
+            <span class="error">Ingresá 0 o más horas.</span>
+          }
+        </div>
+      </div>
+    </section>
+
+    <div class="pie">
+      <button type="submit" class="btn btn-primario" [disabled]="guardando() || form.pristine">
+        {{ guardando() ? 'Guardando…' : 'Guardar' }}
+      </button>
+    </div>
+  </form>
+
+  <section class="panel">
+    <h2>Reglas fijas</h2>
+    <ul class="reglas">
+      <li>1 punto por cada peso pagado por clientes registrados.</li>
+      <li>Butacas VIP: filas R, S y T. Fila accesible: reemplaza a J y K (2 · 10 · 2 butacas).</li>
+      <li>Se aplica un solo cupón por compra.</li>
+    </ul>
+  </section>
+}

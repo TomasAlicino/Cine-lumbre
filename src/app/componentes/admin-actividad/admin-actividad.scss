@@ -1,0 +1,8 @@
+:host { display: grid; gap: 20px; }
+.titulo-fila { display: flex; justify-content: space-between; align-items: center; gap: 10px; margin-bottom: 12px; flex-wrap: wrap; }
+.filtros { display: flex; gap: 10px; flex-wrap: wrap; flex: 1; }
+.buscar { max-width: 360px; }
+.accion { max-width: 260px; }
+.alto { max-height: 70vh; overflow-y: auto; }
+.nowrap { white-space: nowrap; font-variant-numeric: tabular-nums; }
+.ver-mas { margin-top: 12px; }

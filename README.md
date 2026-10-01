@@ -10,18 +10,7 @@ para empleados y panel de administración con reportes.
 - 📄 **Requerimientos:** [docs/REQUERIMIENTOS.md](docs/REQUERIMIENTOS.md)
 - 🗄️ **Esquema Supabase:** [docs/supabase.sql](docs/supabase.sql)
 
-### Cuentas de prueba
-
-| Rol | Mail | Contraseña |
-|---|---|---|
-| Admin | admin@lumbre.com | admin123 |
-| Empleado | empleado@lumbre.com | empleado123 |
-| Cliente (1200 puntos) | cliente@lumbre.com | cliente123 |
-| Cliente mayor de 50 | mayor@lumbre.com | mayor123 |
-| Cliente menor (13 años) | joven@lumbre.com | joven123 |
-
-La pantalla de ingreso tiene accesos rápidos para admin, empleado y cliente. Cupones de prueba:
-`LUMBRE10` (10%) y `DORADOS50` (30%, solo para mayores de 50).
+Cupones de prueba: `LUMBRE10` (10%) y `DORADOS50` (30%, solo para mayores de 50).
 
 ---
 
@@ -37,16 +26,19 @@ npm run build        # genera dist/cine-lumbre/browser
 
 ### Configurar Supabase
 
-1. Crear un proyecto en Supabase y correr [docs/supabase.sql](docs/supabase.sql) en el **SQL Editor**.
-2. En **Authentication → Providers → Email**, desactivar *Confirm email* (las cuentas demo se dan
-   de alta solas en su primer ingreso).
-3. Completar [src/environments/environment.ts](src/environments/environment.ts) con
-   `supabaseUrl` y `supabasePublishableKey` (Project Settings → API → *publishable key*).
-   **No** usar la contraseña de la base ni la `service_role` key: el archivo se publica en el navegador.
-4. La primera vez que la app encuentra la tabla vacía la siembra con `public/data/seed.json`.
-
-Si `environment.ts` no tiene la clave, la app corre en **modo local** (localStorage + BroadcastChannel
-entre pestañas). Sirve para probar sin backend.
+1. En **Authentication → Providers → Email**, desactivar *Confirm email*.
+2. Correr [docs/supabase.sql](docs/supabase.sql) completo en el **SQL Editor**. Crea las tablas, las
+   políticas de seguridad, los triggers, el bucket `posters` y los datos iniciales (salas, películas,
+   candy, cupones y recompensas).
+3. Completar [src/environments/environment.ts](src/environments/environment.ts) con `supabaseUrl` y
+   `supabaseKey` (Project Settings → API → *publishable key*). **Nunca** la `service_role` key.
+4. Registrarse desde la app con `admin@lumbre.com` y `empleado@lumbre.com` y darles el rol desde el
+   SQL Editor (está al final de `supabase.sql`):
+   ```sql
+   update public.perfiles set rol = 'admin'    where email = 'admin@lumbre.com';
+   update public.perfiles set rol = 'empleado' where email = 'empleado@lumbre.com';
+   ```
+5. Ingresar como admin → **Funciones** y programar las funciones de cada película.
 
 ### Deploy en Firebase Hosting
 
@@ -57,51 +49,45 @@ npm run build
 firebase deploy --only hosting   # proyecto "cine-lumbre" (ver .firebaserc)
 ```
 
-`firebase.json` ya tiene el *rewrite* a `index.html` (necesario para las rutas de Angular), el
-`no-cache` del service worker y caché larga para los bundles con hash.
-
 ---
 
 ## Arquitectura
 
 ```
 src/app
-├── core/                       ← sin UI: lógica y datos
-│   ├── models/                 interfaces de dominio (una por colección)
-│   ├── services/               un servicio por dominio + DbService + SupabaseService
-│   ├── guards/                 authGuard, rolGuard, invitadoGuard, salidaCompraGuard
-│   └── utils/                  reglas puras: layout de sala, preventa, precios, fechas
-├── shared/                     reutilizable entre pantallas
-│   ├── components/             mapa de butacas, estrellas, tarjeta de película, selectores
-│   ├── directives/             appSiRol, appMascaraFecha, appImagenRespaldo, appAutofoco
-│   └── pipes/                  pesos, duracion, fechaAR, clasificacion, tipoButaca, buscarPeliculas, estrellas
-└── features/                   una carpeta por área, todas con lazy loading
-    ├── public/                 inicio, cartelera, próximamente, detalle de película
-    ├── booking/                compra (butacas → candy → pago) y entrada con QR
-    ├── auth/                   ingreso y registro
-    ├── account/                perfil, compras, mis películas, puntos
-    ├── staff/                  StaffModule (NgModule): validador de QR
-    └── admin/                  layout + 10 secciones
+├── componentes/        una carpeta por componente: x.ts + x.html + x.scss
+│   ├── inicio, cartelera, proximamente, pelicula-detalle, no-encontrado
+│   ├── compra, entrada, validador
+│   ├── login, registro, mi-cuenta (+ mi-perfil, mis-compras, mis-peliculas, mis-puntos)
+│   ├── admin (+ admin-tablero, admin-peliculas, admin-funciones, admin-salas, admin-candy,
+│   │         admin-cupones, admin-recompensas, admin-usuarios, admin-actividad, admin-configuracion)
+│   └── compartidos: mapa-butacas, estrellas, pelicula-card, selector-dias, selector-horarios, toasts
+├── modulos/staff/      StaffModule + StaffRoutingModule (área de empleados como NgModule)
+├── services/           un servicio por tabla/tema; todos usan el cliente de SupabaseService
+├── models/             una interfaz por tabla (campos = columnas)
+├── guards/             authGuard, rolGuard, invitadoGuard, salidaCompraGuard
+├── pipes/              pesos, duracion, fechaAR, hora, dia, clasificacion, tipoButaca, buscarPeliculas
+├── directivas/         *appSiRol, appMascaraFecha, appImagenRespaldo, appAutofoco
+└── utils/              funciones puras: layout de sala, preventa y precios, fechas, validadores
 ```
 
 ### Flujo de datos
 
 ```
-Componente ──► Servicio de dominio (ReservasService, FuncionesService, …)
-                   │  reglas de negocio y validaciones
-                   ▼
-               DbService ── BehaviorSubject por colección ──► Observables a la UI (async pipe)
-                   │
-                   ├─ Supabase configurado → tabla lumbre_datos + Realtime
-                   └─ sin configurar       → localStorage + BroadcastChannel
+Componente (signals) ──► Servicio (async/await) ──► Supabase
+   ngOnInit: cargar()        from('tabla').select/insert/update/delete
+   try / catch → toast       if (error) throw new Error(...)
+                                         │
+                       Postgres: claves foráneas, RLS por rol, triggers
 ```
 
-- Los componentes **no tienen lógica de negocio**: se suscriben a observables con `async` y llaman
-  métodos de servicios.
-- Las **reglas de negocio** viven en servicios y en funciones puras de `core/utils`: preventa,
-  recargo VIP, restricción de edad y solapamiento de funciones.
-- **DbService** es el único que conoce el almacenamiento. Pasar de localStorage a Supabase no tocó
-  ningún otro servicio de dominio.
+- Cada componente guarda su estado en **signals** y carga sus datos en `ngOnInit` con `async/await`,
+  igual que en la clase de Supabase Storage.
+- Cada **servicio** consulta solo lo que necesita (`select`, `eq`, `gte`, `in`, `order`) y lanza un
+  `Error` con un mensaje en castellano que el componente muestra en un toast.
+- Las **reglas de negocio** que tienen que cumplirse siempre (no vender dos veces una butaca, mover
+  puntos y crédito) están en la base. Las demás (preventa, recargo VIP, edad, solapamiento de
+  funciones) están en servicios y en `utils/`.
 
 ---
 
@@ -109,68 +95,75 @@ Componente ──► Servicio de dominio (ReservasService, FuncionesService, …
 
 | Tema | Dónde |
 |---|---|
-| **Componentes, Input & Output** | `MapaButacasComponent` (`@Input estado` / `@Output butacaClick`), `EstrellasComponent` (`[(valor)]` con `valorChange`), `PeliculaCardComponent` (`alternarAlerta`) |
-| **Rutas** | `app.routes.ts`, rutas hijas en `mi-cuenta` y `admin`, parámetros enlazados a `@Input` con `withComponentInputBinding()` |
-| **Lazy loading** | Todas las pantallas: `loadComponent` / `loadChildren`. El admin y las librerías pesadas (jsPDF, xlsx) se descargan solo cuando se usan |
-| **Módulos** | `StaffModule` + `StaffRoutingModule` (`RouterModule.forChild`) cargado con `loadChildren` |
-| **Servicios** | `core/services`, inyectados con `inject()`, `providedIn: 'root'` |
-| **HTTP** | `HttpClient` carga la semilla `data/seed.json` en el `provideAppInitializer` |
-| **Observables (RxJS)** | `BehaviorSubject` por colección, `combineLatest`, `switchMap`, `timer` (expiración de bloqueos de butacas), `async` pipe |
-| **Formularios** | Reactivos con validadores propios (`core/utils/validadores.ts`) en ingreso, registro, películas, funciones y compra; template-driven en el validador |
-| **Supabase** | `SupabaseService` (`createClient`), Auth (`signInWithPassword` / `signUp` / `signOut`), tabla de datos, **Realtime** para las butacas |
-| **Guards** | `authGuard`, `rolGuard('admin')`, `invitadoGuard` (CanActivate) y `salidaCompraGuard` (CanDeactivate: confirma y libera las butacas si salís a mitad de compra) |
-| **Pipes** | 7 pipes propios en `shared/pipes/pipes.ts` (ej. `buscarPeliculas` filtra por texto y géneros) |
-| **Directivas** | `*appSiRol` (estructural, muestra según el rol), `appMascaraFecha`, `appImagenRespaldo`, `appAutofoco` |
-| **Firebase Hosting** | `firebase.json` |
-| **PWA** | `@angular/service-worker`, `ngsw-config.json`, `manifest.webmanifest`, íconos de 72 a 512 px |
+| **Componentes y signals** | Todos los componentes: `signal`, `computed`, `.set()`, `.update()` |
+| **Input / Output / model** | `MapaButacas` (`input estado`, `output butacaClick`), `Estrellas` (`model valor` → `[(valor)]`), `PeliculaCard` (`output alternarAlerta`), `SelectorDias` y `SelectorHorarios` (`model valores`) |
+| **Rutas** | `app.routes.ts`, rutas hijas en `mi-cuenta` y `admin`, `paramMap` en detalle, compra y entrada |
+| **Lazy loading** | Todas las pantallas con `loadComponent`; el área de empleados con `loadChildren` |
+| **Módulos** | `StaffModule` + `StaffRoutingModule` (`RouterModule.forChild`), con `Validador` declarado (`standalone: false`) |
+| **Servicios** | `services/`, `providedIn: 'root'`, inyectados con `inject()` |
+| **HTTP y Observables** | `FeriadosService` con `HttpClient` contra la API pública [Nager.Date](https://date.nager.at) (lista *public-apis*): marca los feriados en las funciones; `subscribe({ next, error })` y `unsubscribe` en `ngOnDestroy` |
+| **Formularios** | Reactive Forms con `FormBuilder` y `Validators` (más validadores propios en `utils/validadores.ts`) en ingreso, registro, perfil, compra y todo el admin; `ngModel` en buscadores |
+| **Supabase** | Auth (`signUp`, `signInWithPassword`, `signOut`, `getUser`), tablas con `select/insert/update/delete`, **Storage** para los pósters (`upload`, `getPublicUrl`, `remove`) |
+| **Guards** | `authGuard`, `rolGuard('admin')`, `invitadoGuard` (CanActivate) y `salidaCompraGuard` (CanDeactivate: confirma y libera las butacas al salir a mitad de compra) |
+| **Pipes** | 8 pipes propios en `pipes/pipes.ts` |
+| **Directivas** | `*appSiRol` (estructural: `TemplateRef` + `ViewContainerRef`), `appMascaraFecha`, `appImagenRespaldo` y `appAutofoco` (de atributo, con `@HostListener`) |
+| **Firebase Hosting** | `firebase.json` (rewrite a `index.html` para las rutas de Angular) |
+| **PWA** | `@angular/service-worker`, `ngsw-config.json` (también cachea los feriados), `manifest.webmanifest`, íconos |
 
 ---
 
 ## Decisiones técnicas
 
-**Standalone components + un NgModule.** El proyecto usa componentes standalone, el estándar actual de
-Angular. El área de empleados se armó como NgModule con su routing module para aplicar el patrón
-visto en clase. Los dos conviven: el módulo importa el componente standalone.
+**Una tabla por entidad en Supabase.** `peliculas`, `funciones`, `salas`, `pedidos`, `productos`,
+etc., con claves foráneas: no se puede borrar una función con entradas vendidas (la base devuelve el
+error `23503` y el servicio lo traduce a un mensaje). Los géneros son un `text[]`, porque una película
+puede tener varios.
 
-**Una tabla documental en Supabase (`lumbre_datos`).** Cada registro es una fila
-`(coleccion, id, data jsonb)`. Ventajas: un solo esquema, una suscripción Realtime para todo y el
-modelo de dominio queda tipado en TypeScript (`models.ts`). Contra: no hay claves foráneas ni
-consultas SQL por columna. Para el volumen de un cine alcanza, y la integridad la cuidan los
-servicios. El siguiente paso natural es una tabla por colección con RLS por rol.
+**Un solo cliente de Supabase.** En clase cada servicio creaba su cliente con `createClient`. Acá hay
+más de quince servicios, y varios clientes en la misma página se pisan la sesión. Por eso
+`SupabaseService` crea uno y los demás lo inyectan.
 
-**Escritura optimista.** `DbService` actualiza la UI al instante y después envía a Supabase solo la
-diferencia (upsert de lo que cambió, delete de lo que se quitó). Los ecos de Realtime de cambios
-propios se ignoran comparando el contenido.
+**Seguridad con Row Level Security.** La clave publishable viaja en el front, así que los permisos
+están en la base: el catálogo lo lee cualquiera y solo lo escribe el admin; cada cliente ve solo sus
+compras, canjes y notificaciones; empleados y admin validan QR. Un trigger impide que un cliente se
+cambie el rol, los puntos o el crédito.
 
-**Butacas en tiempo real.** Al tocar una butaca se crea un *bloqueo* con vencimiento (colección
-`bloqueos`). Los demás usuarios lo reciben por Realtime y la ven ocupada. Si la compra se abandona,
-el bloqueo vence solo o se libera con el `CanDeactivate`. Antes de confirmar el pago se vuelve a
-verificar que ninguna butaca se haya vendido.
+**Butacas: sin ventas dobles.** La tabla `butacas_vendidas` tiene clave primaria
+`(funcion_id, butaca)`. Al guardar un pedido, un trigger inserta sus butacas: si alguna ya estaba
+vendida, falla toda la compra y no se guarda nada. El mismo trigger suma los puntos (1 por peso) y
+descuenta el crédito usado. Al cancelar, otro trigger libera las butacas y devuelve el importe como
+crédito.
+
+**Butacas "en tiempo real" consultando cada 4 segundos.** Al tocar una butaca se inserta un
+*bloqueo* que vence a los 10 minutos (también con clave primaria, así dos personas no bloquean la
+misma). La pantalla de compra vuelve a consultar vendidas y bloqueadas cada 4 segundos con
+`setInterval`. Es más simple que Realtime, que no se vio en la cursada, y alcanza para ver lo que
+eligen los demás casi al instante.
+
+**QR de un solo uso, por mostrador.** El QR contiene el código del pedido (`LMB-XXXX-XXXX`, también
+se puede tipear). La entrada y el candy se validan por separado. La actualización se hace con
+`.is('entrada_validada_en', null)`: si dos empleados escanean a la vez, solo uno lo logra.
+
+**Compra anónima.** El código del pedido es su clave, así el pedido se puede crear sin cuenta. Como
+un anónimo no tiene permiso para leer pedidos, la entrada recién comprada queda en memoria
+(`ComprasService.ultimoPedido`) para mostrar el QR y descargar el PDF.
 
 **Layout de sala como dato derivado.** Todas las salas son iguales, así que el layout (A–T, fila JK
-accesible, R–T VIP) se calcula en `sala-layout.ts` y no se guarda. Cada sala solo guarda sus butacas
-fuera de servicio.
+accesible con 2/10/2 butacas, R–T VIP) se calcula en `sala-layout.ts`. Cada sala solo guarda sus
+butacas fuera de servicio.
 
 **Asignación automática de sala.** `FuncionesService.programar` recorre días × horarios y, para cada
-función, busca una sala sin solapamiento considerando `duración + 30 min de limpieza`. Entre las
-libres elige la menos usada del día, para repartir la carga. Si no hay sala libre, lo informa en el
-resultado en vez de crear una función inválida.
+función, busca una sala sin solapamiento considerando la duración más 30 min de limpieza
+(configurable). Entre las libres elige la menos usada del día. Si no hay sala, o el horario es
+anterior al estreno, lo informa como conflicto en vez de crear una función inválida.
 
-**Fechas y horas sin calendarios** (pedido del 28/02). Las fechas se escriben con máscara `dd/mm/aaaa`
-y el rango tiene atajos de 1, 2 y 4 semanas. Los días de la semana son chips y los horarios se arman
-con una grilla de hora + minutos: dos clics, sin listas largas.
+**Fechas y horas sin calendarios** (pedido del 28/02). Las fechas se escriben con la máscara
+`dd/mm/aaaa` de `appMascaraFecha`. Los días de la semana son chips, y los horarios se arman con una
+grilla de hora + minutos: dos clics, sin listas largas.
 
-**QR único por compra.** El QR codifica el código del pedido (`LMB-XXXX-XXXX`). La entrada y el candy
-tienen estados de validación independientes: el empleado del candy no "quema" la entrada, ni al
-revés. Cada validación queda en el log de actividad.
-
-**PDF y Excel en el cliente.** `jspdf` + `qrcode` generan la entrada, y `xlsx` exporta el reporte.
-Se importan dinámicamente, así que no pesan en la carga inicial.
-
-**Autenticación.** Supabase Auth maneja las credenciales. El perfil del negocio (datos del registro,
-rol, puntos, crédito) se guarda aparte con el mismo id. En modo local se usa SHA-256 con sal fija,
-solo para la demo.
+**PDF y Excel en el cliente.** `jspdf` + `qrcode` generan la entrada, y `xlsx` exporta el reporte
+(facturación, películas más vistas y candy más vendido).
 
 **Estilo visual.** Paleta propia de "palacio de cine" (azul noche de telón, latón de marquesina,
-terciopelo de butaca) con tipografías Big Shoulders Display + Figtree. Hay variables CSS en
-`styles.scss`, diseño responsive y foco visible en todos los controles.
+terciopelo de butaca) con tipografías Big Shoulders Display + Figtree. Diseño responsive y foco
+visible en todos los controles.

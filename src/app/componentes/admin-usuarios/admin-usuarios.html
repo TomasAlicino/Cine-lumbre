@@ -1,0 +1,64 @@
+<header class="cabecera-pagina">
+  <div>
+    <h1>Usuarios</h1>
+    <p>Asigná el rol de empleado a quienes validan entradas en la puerta y en el candy bar.</p>
+  </div>
+</header>
+
+<section class="panel">
+  <div class="titulo-fila">
+    <input
+      type="search"
+      [ngModel]="texto()"
+      (ngModelChange)="texto.set($event)"
+      placeholder="Buscar por nombre o mail…"
+      aria-label="Buscar usuario"
+      class="buscar"
+    />
+    <div class="chips">
+      @for (r of filtrosRol; track r.valor) {
+        <button type="button" class="chip" [class.activo]="filtroRol() === r.valor" (click)="filtroRol.set(r.valor)">{{ r.texto }}</button>
+      }
+    </div>
+  </div>
+
+  @if (cargando()) {
+    <p class="vacio">Cargando…</p>
+  } @else {
+    <div class="tabla-scroll">
+      <table class="tabla">
+        <thead>
+          <tr><th>Nombre</th><th>Mail</th><th class="num">Edad</th><th class="num">Puntos</th><th class="num">Crédito</th><th>Rol</th></tr>
+        </thead>
+        <tbody>
+          @for (u of filtrados(); track u.id) {
+            <tr>
+              <td>{{ u.apellido }}, {{ u.nombre }}</td>
+              <td>{{ u.email }}</td>
+              <td class="num">{{ edadDe(u) }}</td>
+              <td class="num">{{ u.puntos.toLocaleString('es-AR') }}</td>
+              <td class="num">{{ u.credito | pesos }}</td>
+              <td>
+                <select
+                  #sel
+                  [value]="u.rol"
+                  (change)="cambiarRol(u, sel)"
+                  [disabled]="u.id === yo()"
+                  [attr.aria-label]="'Rol de ' + u.nombre"
+                  [title]="u.id === yo() ? 'No podés cambiar tu propio rol' : ''"
+                  class="rol"
+                >
+                  <option value="cliente">Cliente</option>
+                  <option value="empleado">Empleado</option>
+                  <option value="admin">Admin</option>
+                </select>
+              </td>
+            </tr>
+          } @empty {
+            <tr><td colspan="6" class="suave">Sin resultados.</td></tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  }
+</section>

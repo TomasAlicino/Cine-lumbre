@@ -1,0 +1,115 @@
+<div class="contenedor pagina acceso">
+  <section class="marquesina">
+    <h1>Tu butaca <span>te espera.</span></h1>
+    <ul>
+      <li>Cupón de <strong>{{ config.config().porcentaje_primera_compra }}% en tu primera compra</strong>.</li>
+      <li>Sumás 1 punto por cada peso y lo canjeás por entradas o candy.</li>
+      <li>Guardás tus entradas y tu historial en "Mis películas".</li>
+      <li>Alertas de estrenos y crédito si cancelás.</li>
+    </ul>
+  </section>
+  <form class="panel" [formGroup]="form" (ngSubmit)="registrar()" novalidate>
+    <h2>Crear cuenta</h2>
+    <div class="form-grilla">
+      <div class="campo">
+        <label for="nombre">Nombre</label>
+        <input id="nombre" formControlName="nombre" autocomplete="given-name" appAutofoco />
+        @if (err('nombre')) {
+          <span class="error">Completá tu nombre.</span>
+        }
+      </div>
+      <div class="campo">
+        <label for="apellido">Apellido</label>
+        <input id="apellido" formControlName="apellido" autocomplete="family-name" />
+        @if (err('apellido')) {
+          <span class="error">Completá tu apellido.</span>
+        }
+      </div>
+      <div class="campo ancho">
+        <label for="email">Mail</label>
+        <input id="email" type="email" formControlName="email" autocomplete="email" />
+        @if (err('email')) {
+          <span class="error">Escribí un mail válido.</span>
+        }
+      </div>
+      <div class="campo">
+        <label for="nac">Fecha de nacimiento</label>
+        <input id="nac" formControlName="fecha_nacimiento" appMascaraFecha="dd/mm/aaaa" inputmode="numeric" placeholder="dd/mm/aaaa" />
+        <span class="ayuda">Escribí solo los números, las barras se ponen solas.</span>
+        @if (err('fecha_nacimiento')) {
+          <span class="error">
+            {{ form.controls.fecha_nacimiento.hasError('edad') ? 'La edad debe estar entre 5 y 110 años.' : 'Fecha inválida.' }}
+          </span>
+        }
+      </div>
+      <div class="campo">
+        <label for="vac">Días de vacaciones por año</label>
+        <input id="vac" type="number" min="0" max="365" formControlName="dias_vacaciones" inputmode="numeric" />
+        @if (err('dias_vacaciones')) {
+          <span class="error">Entre 0 y 365.</span>
+        }
+      </div>
+      <div class="campo">
+        <span class="etiqueta-campo">Tipo de sangre</span>
+        <div class="chips" role="radiogroup" aria-label="Tipo de sangre">
+          @for (t of tiposSangre; track t) {
+            <button
+              type="button"
+              class="chip"
+              role="radio"
+              [attr.aria-checked]="form.value.tipo_sangre === t"
+              [class.activo]="form.value.tipo_sangre === t"
+              (click)="elegir('tipo_sangre', t)"
+            >
+              {{ t }}
+            </button>
+          }
+        </div>
+        @if (err('tipo_sangre')) {
+          <span class="error">Elegí una opción.</span>
+        }
+      </div>
+      <div class="campo">
+        <span class="etiqueta-campo">Color de ojos</span>
+        <div class="chips" role="radiogroup" aria-label="Color de ojos">
+          @for (c of coloresOjos; track c) {
+            <button
+              type="button"
+              class="chip"
+              role="radio"
+              [attr.aria-checked]="form.value.color_ojos === c"
+              [class.activo]="form.value.color_ojos === c"
+              (click)="elegir('color_ojos', c)"
+            >
+              {{ c }}
+            </button>
+          }
+        </div>
+        @if (err('color_ojos')) {
+          <span class="error">Elegí una opción.</span>
+        }
+      </div>
+      <div class="campo">
+        <label for="pass">Contraseña</label>
+        <input id="pass" type="password" formControlName="password" autocomplete="new-password" />
+        @if (err('password')) {
+          <span class="error">Mínimo 6 caracteres.</span>
+        }
+      </div>
+      <div class="campo">
+        <label for="pass2">Repetir contraseña</label>
+        <input id="pass2" type="password" formControlName="password2" autocomplete="new-password" />
+        @if (err('password2')) {
+          <span class="error">Las contraseñas no coinciden.</span>
+        }
+      </div>
+    </div>
+    @if (error()) {
+      <p class="aviso error" role="alert">{{ error() }}</p>
+    }
+    <div class="pie">
+      <button class="btn btn-primario" type="submit" [disabled]="enviando()">{{ enviando() ? 'Creando cuenta…' : 'Crear cuenta' }}</button>
+      <span class="chico">¿Ya tenés cuenta? <a routerLink="/ingresar" [queryParams]="{ volver: volver }">Ingresá</a></span>
+    </div>
+  </form>
+</div>

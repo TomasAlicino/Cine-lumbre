@@ -1,0 +1,22 @@
+:host { display: grid; gap: 20px; }
+h2 { margin: 0 0 14px; font-size: var(--t-xl); }
+.titulo-fila { display: flex; justify-content: space-between; align-items: center; gap: 10px; margin-bottom: 12px; }
+.titulo-fila h2 { margin: 0; }
+.categoria { margin: 18px 0 6px; font-size: var(--t-l); color: var(--laton); }
+.en-linea { display: flex; align-items: flex-start; gap: 10px; margin-bottom: 16px; max-width: 520px; }
+.en-linea .campo { flex: 1; }
+.ancho { grid-column: 1 / -1; }
+.pie { display: flex; gap: 10px; margin-top: 18px; }
+.incluidos { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 8px; }
+.incluido { display: flex; justify-content: space-between; align-items: center; padding: 8px 12px; border: 1px solid var(--linea); border-radius: var(--r-s); font-size: var(--t-s); }
+.incluido.con { border-color: var(--laton); }
+.contador { display: flex; align-items: center; gap: 8px; }
+.contador button { width: 30px; height: 30px; border-radius: 50%; border: 1px solid var(--linea); background: var(--noche); color: var(--pantalla); cursor: pointer; font-size: 16px; }
+.contador strong { min-width: 16px; text-align: center; }
+.combos { display: grid; grid-template-columns: repeat(auto-fill, minmax(230px, 1fr)); gap: 14px; }
+.combo { display: flex; flex-direction: column; gap: 6px; align-items: flex-start; padding: 16px; border: 1px solid var(--linea); border-radius: var(--r-m); background: var(--noche); }
+.combo.pausado { opacity: 0.55; }
+.combo h3 { margin: 0; font-size: var(--t-l); }
+.combo p { margin: 0; }
+.precio { font: 800 var(--t-2xl) / 1 var(--f-display); color: var(--laton); }
+.combo .acciones { display: flex; gap: 6px; margin-top: 6px; }

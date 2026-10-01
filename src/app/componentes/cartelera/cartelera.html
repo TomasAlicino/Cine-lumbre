@@ -1,0 +1,46 @@
+<div class="contenedor pagina">
+  <div class="cabecera-pagina">
+    <div>
+      <h1>Cartelera</h1>
+      <p>Todas las películas con entradas a la venta.</p>
+    </div>
+  </div>
+
+  <div class="filtros">
+    <div class="campo buscador">
+      <label for="buscar">Buscar por título</label>
+      <input id="buscar" type="search" [ngModel]="texto()" (ngModelChange)="texto.set($event)" placeholder="Ej: marea, faro, robot…" autocomplete="off" />
+    </div>
+    <div class="campo">
+      <span class="etiqueta-campo" id="lbl-generos">Géneros</span>
+      <div class="chips" role="group" aria-labelledby="lbl-generos">
+        @for (g of generos; track g) {
+          <button type="button" class="chip" [class.activo]="elegidos().includes(g)" [attr.aria-pressed]="elegidos().includes(g)" (click)="alternar(g)">{{ g }}</button>
+        }
+        @if (elegidos().length || texto()) {
+          <button type="button" class="btn-texto chico" (click)="limpiar()">Limpiar filtros</button>
+        }
+      </div>
+    </div>
+  </div>
+
+  @if (cargando()) {
+    <p class="suave">Cargando películas…</p>
+  } @else {
+    <!-- El pipe es puro: solo se vuelve a ejecutar cuando cambian la lista, el texto o los géneros -->
+    <p class="suave chico" aria-live="polite">
+      {{ (enVenta() | buscarPeliculas: texto() : elegidos()).length }}
+      {{ (enVenta() | buscarPeliculas: texto() : elegidos()).length === 1 ? 'película' : 'películas' }}
+    </p>
+    <div class="grilla">
+      @for (p of enVenta() | buscarPeliculas: texto() : elegidos(); track p.id) {
+        <app-pelicula-card [pelicula]="p" [promedio]="promedios().get(p.id)" [preventa]="enPreventa(p)" />
+      } @empty {
+        <div class="vacio">
+          <p>No hay películas que coincidan con esa búsqueda.</p>
+          <button type="button" class="btn" (click)="limpiar()">Limpiar filtros</button>
+        </div>
+      }
+    </div>
+  }
+</div>

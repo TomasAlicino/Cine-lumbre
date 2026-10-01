@@ -1,0 +1,20 @@
+<div class="estrellas" [class.editable]="editable()" role="radiogroup" [attr.aria-label]="etiqueta()">
+  @for (n of numeros; track n) {
+    @if (editable()) {
+      <button
+        type="button"
+        role="radio"
+        [attr.aria-checked]="valor() === n"
+        [attr.aria-label]="n + (n === 1 ? ' estrella' : ' estrellas')"
+        [class.llena]="n <= (hover() || valor())"
+        (mouseenter)="hover.set(n)"
+        (mouseleave)="hover.set(0)"
+        (click)="elegir(n)"
+      >
+        ★
+      </button>
+    } @else {
+      <span [class.llena]="n <= redondeado()" aria-hidden="true">★</span>
+    }
+  }
+</div>

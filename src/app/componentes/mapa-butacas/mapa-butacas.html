@@ -1,0 +1,44 @@
+<div class="sala" [class.admin]="modo() === 'admin'">
+  <div class="pantalla" aria-hidden="true"><span>Pantalla</span></div>
+  <div class="scroll" tabindex="0" aria-label="Mapa de butacas, desplazable horizontalmente">
+    <div class="filas" role="grid">
+      @for (fila of layout; track fila.etiqueta) {
+        <div [class]="'fila ' + fila.tipo" role="row">
+          <span class="rotulo" aria-hidden="true">{{ fila.etiqueta }}</span>
+          @for (bloque of fila.bloques; track $index) {
+            <div class="bloque" [class.centro]="$index === 1">
+              @for (b of bloque; track b.id) {
+                <button
+                  type="button"
+                  role="gridcell"
+                  [class]="'butaca ' + b.tipo + ' ' + estadoDe(b)"
+                  [disabled]="!clickeable(b)"
+                  [attr.aria-pressed]="estadoDe(b) === 'elegida'"
+                  [attr.aria-label]="descripcion(b)"
+                  [title]="b.id"
+                  (click)="butacaClick.emit(b)"
+                >
+                  <span aria-hidden="true">{{ b.numero }}</span>
+                </button>
+              }
+            </div>
+          }
+          <span class="rotulo" aria-hidden="true">{{ fila.etiqueta }}</span>
+        </div>
+      }
+    </div>
+  </div>
+  <ul class="leyenda">
+    @if (modo() === 'compra') {
+      <li><i class="butaca normal libre"></i>Libre</li>
+      <li><i class="butaca normal elegida"></i>Tu elección</li>
+      <li><i class="butaca normal vendida"></i>Vendida</li>
+      <li><i class="butaca normal ajena"></i>Otra persona la está eligiendo</li>
+    } @else {
+      <li><i class="butaca normal libre"></i>En servicio</li>
+      <li><i class="butaca normal fuera"></i>Fuera de servicio</li>
+    }
+    <li><i class="butaca accesible libre"></i>Accesible (fila JK)</li>
+    <li><i class="butaca vip libre"></i>VIP (filas R, S y T)</li>
+  </ul>
+</div>

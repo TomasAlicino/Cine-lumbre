@@ -1,0 +1,97 @@
+<header class="cabecera-pagina">
+  <div>
+    <h1>Fidelización</h1>
+    <p>Los clientes registrados suman 1 punto por cada peso pagado. Acá definís cuántos puntos cuesta cada recompensa.</p>
+  </div>
+</header>
+
+@if (mostrarForm()) {
+  <form class="panel" [formGroup]="form" (ngSubmit)="guardar()">
+    <h2>{{ editando() ? 'Editar recompensa' : 'Nueva recompensa' }}</h2>
+    <div class="form-grilla">
+      <div class="campo">
+        <label for="rn">Nombre</label>
+        <input id="rn" formControlName="nombre" maxlength="40" />
+        @if (form.controls.nombre.touched && form.controls.nombre.invalid) {
+          <span class="error">Ingresá el nombre de la recompensa.</span>
+        }
+      </div>
+      <div class="campo">
+        <label for="rt">Tipo</label>
+        <select id="rt" formControlName="tipo">
+          <option value="entrada">Entrada gratis</option>
+          <option value="producto">Producto del candy</option>
+        </select>
+      </div>
+      @if (form.controls.tipo.value === 'producto') {
+        <div class="campo">
+          <label for="rp">Producto</label>
+          <select id="rp" formControlName="producto_id">
+            <option [ngValue]="null" disabled>Elegí un producto</option>
+            @for (p of productos(); track p.id) {
+              <option [ngValue]="p.id">{{ p.nombre }}</option>
+            }
+          </select>
+          @if (form.controls.producto_id.touched && form.controls.producto_id.invalid) {
+            <span class="error">Elegí el producto que se canjea.</span>
+          }
+        </div>
+      }
+      <div class="campo">
+        <label for="rc">Costo en puntos</label>
+        <input id="rc" type="number" min="1" formControlName="costo_puntos" />
+        @if (form.controls.costo_puntos.touched && form.controls.costo_puntos.invalid) {
+          <span class="error">El costo debe ser de al menos 1 punto.</span>
+        }
+      </div>
+      <label class="check campo"><input type="checkbox" formControlName="activa" /> Disponible</label>
+    </div>
+    <div class="pie">
+      <button type="submit" class="btn btn-primario">Guardar</button>
+      <button type="button" class="btn" (click)="cancelar()">Cancelar</button>
+    </div>
+  </form>
+}
+
+<section class="panel">
+  <div class="titulo-fila">
+    <h2>Recompensas</h2>
+    <button type="button" class="btn btn-chico btn-primario" (click)="nueva()">Nueva recompensa</button>
+  </div>
+  @if (cargando()) {
+    <p class="vacio">Cargando…</p>
+  } @else {
+    <div class="tabla-scroll">
+      <table class="tabla">
+        <thead>
+          <tr><th>Recompensa</th><th>Tipo</th><th class="num">Puntos</th><th>Estado</th><th></th></tr>
+        </thead>
+        <tbody>
+          @for (r of recompensas(); track r.id) {
+            <tr>
+              <td>{{ r.nombre }}</td>
+              <td>{{ r.tipo === 'entrada' ? 'Entrada (cualquier butaca)' : nombreProducto(r.producto_id) }}</td>
+              <td class="num">{{ r.costo_puntos.toLocaleString('es-AR') }}</td>
+              <td>
+                @if (r.activa) {
+                  <span class="etiqueta ok">Disponible</span>
+                } @else {
+                  <span class="etiqueta">Pausada</span>
+                }
+              </td>
+              <td>
+                <div class="acciones">
+                  <button type="button" class="btn btn-chico" (click)="editar(r)">Editar</button>
+                  <button type="button" class="btn btn-chico btn-peligro" (click)="eliminar(r)">Borrar</button>
+                </div>
+              </td>
+            </tr>
+          } @empty {
+            <tr><td colspan="5" class="suave">No hay recompensas.</td></tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  }
+  <p class="suave chico">Se gana 1 punto por cada peso pagado. Los puntos son personales: no se pueden transferir entre usuarios. Si un cliente cancela una compra, recupera los puntos canjeados y se le descuentan los ganados.</p>
+</section>

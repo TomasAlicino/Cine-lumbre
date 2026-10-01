@@ -1,0 +1,8 @@
+.pared { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 22px; }
+.vacio { grid-column: 1 / -1; }
+.recuerdo { background: var(--noche-2); border: 1px solid var(--linea); border-radius: var(--r-m); overflow: hidden; display: flex; flex-direction: column; }
+.recuerdo img { aspect-ratio: 2 / 3; object-fit: cover; width: 100%; display: block; }
+.datos { padding: 12px 14px 16px; display: flex; flex-direction: column; gap: 6px; }
+h3 { margin: 0; font-size: var(--t-l); line-height: 1.1; }
+.coment { margin: 0; font-size: var(--t-s); font-style: italic; color: var(--humo); }
+.btn-texto { align-self: flex-start; }

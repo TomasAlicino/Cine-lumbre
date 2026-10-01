@@ -1,0 +1,36 @@
+<div class="contenedor pagina acceso">
+  <section class="marquesina">
+    <h1>Hola de nuevo <span>a la función.</span></h1>
+    <p class="suave">Ingresá para usar tus puntos, tu crédito y ver tus entradas.</p>
+  </section>
+  <form class="panel" [formGroup]="form" (ngSubmit)="ingresar()" novalidate>
+    <h2>Ingresar</h2>
+    <div class="form-grilla">
+      <div class="campo ancho">
+        <label for="email">Mail</label>
+        <input id="email" type="email" formControlName="email" autocomplete="email" appAutofoco />
+        @if (form.controls.email.touched && form.controls.email.invalid) {
+          <span class="error">Escribí un mail válido.</span>
+        }
+      </div>
+      <div class="campo ancho">
+        <label for="pass">Contraseña</label>
+        <input id="pass" type="password" formControlName="password" autocomplete="current-password" />
+        @if (form.controls.password.touched && form.controls.password.invalid) {
+          <span class="error">Escribí tu contraseña.</span>
+        }
+      </div>
+    </div>
+    @if (error()) {
+      <p class="aviso error" role="alert">{{ error() }}</p>
+    }
+    <div class="pie">
+      <button class="btn btn-primario" type="submit" [disabled]="enviando()">{{ enviando() ? 'Ingresando…' : 'Ingresar' }}</button>
+      <span class="chico">¿No tenés cuenta? <a routerLink="/registro" [queryParams]="{ volver: volver }">Registrate</a></span>
+    </div>
+    <p class="nota">
+      Las cuentas de administrador y de empleado se crean registrándose como cualquier cliente y asignándoles
+      el rol desde la tabla <code>perfiles</code> en Supabase.
+    </p>
+  </form>
+</div>

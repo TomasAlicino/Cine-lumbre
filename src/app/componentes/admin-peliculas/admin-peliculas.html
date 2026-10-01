@@ -1,0 +1,166 @@
+<header class="cabecera-pagina">
+  <div>
+    <h1>Películas</h1>
+    <p>Qué se proyecta, qué aparece destacado en la portada, estrenos y preventas.</p>
+  </div>
+  @if (!abierto()) {
+    <button type="button" class="btn btn-primario" (click)="nueva()">Nueva película</button>
+  }
+</header>
+
+@if (abierto()) {
+  <form class="panel editor" [formGroup]="form" (ngSubmit)="guardar()" novalidate>
+    <h2>{{ editando() ? 'Editar película' : 'Nueva película' }}</h2>
+    <div class="con-poster">
+      <div class="poster">
+        @if (imagenActual(); as src) {
+          <img [src]="src" alt="Vista previa del póster" appImagenRespaldo />
+        } @else {
+          <div class="sin-poster" aria-hidden="true">Sin póster</div>
+        }
+        <label class="btn btn-chico btn-bloque">
+          {{ imagenActual() ? 'Cambiar imagen' : 'Subir imagen' }}
+          <input type="file" accept="image/*" (change)="elegirArchivo($event)" hidden />
+        </label>
+        @if (archivo(); as a) {
+          <p class="suave chico nombre-archivo">{{ a.name }}</p>
+          <button type="button" class="btn-texto chico" (click)="limpiarArchivo()">Quitar imagen elegida</button>
+        }
+      </div>
+
+      <div class="form-grilla">
+        <div class="campo ancho">
+          <label for="titulo">Nombre</label>
+          <input id="titulo" formControlName="titulo" maxlength="80" />
+          @if (form.controls.titulo.touched && form.controls.titulo.invalid) {
+            <span class="error">Obligatorio.</span>
+          }
+        </div>
+        <div class="campo ancho">
+          <label for="sinopsis">Sinopsis</label>
+          <textarea id="sinopsis" formControlName="sinopsis" rows="4" maxlength="600"></textarea>
+          @if (form.controls.sinopsis.touched && form.controls.sinopsis.invalid) {
+            <span class="error">Escribí una sinopsis (mín. 20 caracteres).</span>
+          }
+        </div>
+        <div class="campo">
+          <label for="duracion">Duración (minutos)</label>
+          <input id="duracion" type="number" min="30" max="300" formControlName="duracion_min" inputmode="numeric" />
+          @if (form.controls.duracion_min.touched && form.controls.duracion_min.invalid) {
+            <span class="error">Entre 30 y 300 minutos.</span>
+          } @else {
+            <span class="ayuda">{{ form.controls.duracion_min.value | duracion }} · define el fin de cada función</span>
+          }
+        </div>
+        <div class="campo">
+          <label for="estreno">Fecha de estreno</label>
+          <input id="estreno" formControlName="fecha_estreno" appMascaraFecha="dd/mm/aaaa" inputmode="numeric" placeholder="dd/mm/aaaa" />
+          @if (form.controls.fecha_estreno.touched && form.controls.fecha_estreno.invalid) {
+            <span class="error">Fecha inválida.</span>
+          }
+        </div>
+        <div class="campo ancho">
+          <span class="etiqueta-campo" id="lbl-generos">Géneros (podés elegir varios)</span>
+          <div class="chips" role="group" aria-labelledby="lbl-generos">
+            @for (g of generos; track g) {
+              <button type="button" class="chip" [class.activo]="form.controls.generos.value.includes(g)" [attr.aria-pressed]="form.controls.generos.value.includes(g)" (click)="alternarGenero(g)">{{ g }}</button>
+            }
+          </div>
+          @if (form.controls.generos.touched && form.controls.generos.invalid) {
+            <span class="error">Elegí al menos un género.</span>
+          }
+        </div>
+        <div class="campo">
+          <span class="etiqueta-campo" id="lbl-clasif">Clasificación</span>
+          <div class="chips" role="group" aria-labelledby="lbl-clasif">
+            @for (c of clasificaciones; track c) {
+              <button type="button" class="chip" [class.activo]="form.controls.clasificacion.value === c" [attr.aria-pressed]="form.controls.clasificacion.value === c" (click)="form.controls.clasificacion.setValue(c)">{{ c }}</button>
+            }
+          </div>
+        </div>
+        <div class="campo">
+          <span class="etiqueta-campo" id="lbl-estado">Estado</span>
+          <div class="chips" role="group" aria-labelledby="lbl-estado">
+            @for (e of estados; track e.valor) {
+              <button type="button" class="chip" [class.activo]="form.controls.estado.value === e.valor" [attr.aria-pressed]="form.controls.estado.value === e.valor" (click)="form.controls.estado.setValue(e.valor)">{{ e.texto }}</button>
+            }
+          </div>
+        </div>
+        <label class="check ancho campo"><input type="checkbox" formControlName="destacada" /> Destacada en la página principal (además del top 3 de ventas)</label>
+
+        <fieldset class="ancho preventa">
+          <legend><label class="check"><input type="checkbox" formControlName="preventa_habilitada" /> Preventa</label></legend>
+          <p class="suave chico">Abre la venta antes del estreno con un precio especial por entrada. Al llegar el estreno vuelve el precio normal de cada función.</p>
+          <div class="form-grilla">
+            <div class="campo">
+              <label for="pvprecio">Precio de preventa</label>
+              <input id="pvprecio" type="number" min="0" formControlName="preventa_precio" />
+              @if (form.controls.preventa_precio.touched && form.controls.preventa_precio.invalid) {
+                <span class="error">Ingresá un precio válido.</span>
+              }
+            </div>
+            <div class="campo">
+              <label for="pvdias">Días antes del estreno</label>
+              <input id="pvdias" type="number" min="1" max="30" formControlName="preventa_dias_antes" />
+              @if (form.controls.preventa_dias_antes.touched && form.controls.preventa_dias_antes.invalid) {
+                <span class="error">Entre 1 y 30 días.</span>
+              }
+            </div>
+          </div>
+        </fieldset>
+      </div>
+    </div>
+    <div class="pie">
+      <button type="submit" class="btn btn-primario" [disabled]="guardando()">{{ guardando() ? 'Guardando...' : 'Guardar' }}</button>
+      <button type="button" class="btn" (click)="cerrar()" [disabled]="guardando()">Cancelar</button>
+    </div>
+  </form>
+}
+
+<section class="panel">
+  <div class="filtros">
+    <input type="search" [(ngModel)]="texto" placeholder="Buscar por nombre…" aria-label="Buscar película" />
+    <div class="chips">
+      <button type="button" class="chip" [class.activo]="filtroEstado() === ''" (click)="filtroEstado.set('')">Todas</button>
+      @for (e of estados; track e.valor) {
+        <button type="button" class="chip" [class.activo]="filtroEstado() === e.valor" (click)="filtroEstado.set(e.valor)">{{ e.texto }}</button>
+      }
+    </div>
+  </div>
+  @if (cargando()) {
+    <p class="suave">Cargando películas…</p>
+  } @else {
+    <div class="tabla-scroll">
+      <table class="tabla">
+        <thead>
+          <tr><th></th><th>Película</th><th>Estreno</th><th>Estado</th><th>Venta</th><th></th></tr>
+        </thead>
+        <tbody>
+          @for (p of filtradas() | buscarPeliculas: texto() : []; track p.id) {
+            <tr>
+              <td><img class="mini" [src]="p.imagen_url || 'posters/sin-poster.svg'" alt="" appImagenRespaldo loading="lazy" /></td>
+              <td>
+                <strong>{{ p.titulo }}</strong>
+                @if (p.destacada) {
+                  <span class="etiqueta laton">Destacada</span>
+                }
+                <div class="suave chico">{{ p.duracion_min | duracion }} · {{ p.clasificacion }} · {{ p.generos.join(', ') }}</div>
+              </td>
+              <td>{{ p.fecha_estreno | fechaAR }}</td>
+              <td><span class="etiqueta" [class.ok]="p.estado === 'cartelera'" [class.acceso]="p.estado === 'proximamente'">{{ textoEstado(p.estado) }}</span></td>
+              <td class="chico">{{ textoVenta(p) }}</td>
+              <td>
+                <div class="acciones">
+                  <button type="button" class="btn btn-chico" (click)="editar(p)">Editar</button>
+                  <button type="button" class="btn btn-chico btn-peligro" (click)="eliminar(p)">Borrar</button>
+                </div>
+              </td>
+            </tr>
+          } @empty {
+            <tr><td colspan="6" class="suave">No hay películas con ese filtro.</td></tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  }
+</section>

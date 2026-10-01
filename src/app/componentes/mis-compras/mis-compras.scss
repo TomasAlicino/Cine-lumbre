@@ -1,0 +1,15 @@
+.lista { display: flex; flex-direction: column; gap: 12px; }
+.compra { display: grid; grid-template-columns: 110px 1fr auto; gap: 18px; align-items: center; padding: 16px; background: var(--noche-2); border: 1px solid var(--linea); border-radius: var(--r-m); }
+.compra.cancelada, .compra.pasada { opacity: .6; }
+.fecha { display: flex; flex-direction: column; border-right: 2px dashed var(--linea); padding-right: 14px; }
+.dia { font-size: var(--t-xs); color: var(--humo); text-transform: capitalize; }
+.hora { font: 800 var(--t-2xl) / 1 var(--f-display); color: var(--laton); }
+h3 { margin: 0 0 4px; font-size: var(--t-l); }
+.info p { margin: 2px 0; max-width: none; display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
+code { font-family: ui-monospace, Menlo, monospace; }
+.acciones { display: flex; gap: 6px; flex-wrap: wrap; justify-content: flex-end; }
+@media (max-width: 720px) {
+  .compra { grid-template-columns: 1fr; }
+  .fecha { border-right: 0; flex-direction: row; gap: 10px; align-items: baseline; }
+  .acciones { justify-content: flex-start; }
+}

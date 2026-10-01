@@ -1,0 +1,214 @@
+<header class="cabecera-pagina">
+  <div>
+    <h1>Candy bar</h1>
+    <p>Productos por categoría y combos (entrada + pochoclos + bebida) que aparecen destacados al comprar.</p>
+  </div>
+</header>
+
+<nav class="chips" aria-label="Secciones del candy">
+  <button type="button" class="chip" [class.activo]="pestania() === 'productos'" (click)="pestania.set('productos')">Productos</button>
+  <button type="button" class="chip" [class.activo]="pestania() === 'categorias'" (click)="pestania.set('categorias')">Categorías</button>
+  <button type="button" class="chip" [class.activo]="pestania() === 'combos'" (click)="pestania.set('combos')">Combos</button>
+</nav>
+
+@if (cargando()) {
+  <p class="vacio">Cargando…</p>
+} @else {
+  @switch (pestania()) {
+    @case ('categorias') {
+      <section class="panel">
+        <form class="en-linea" [formGroup]="formCategoria" (ngSubmit)="guardarCategoria()">
+          <div class="campo">
+            <input formControlName="nombre" placeholder="Nombre de la categoría" maxlength="30" aria-label="Nombre de la categoría" />
+            @if (formCategoria.controls.nombre.touched && formCategoria.controls.nombre.invalid) {
+              <span class="error">Ingresá un nombre.</span>
+            }
+          </div>
+          <button type="submit" class="btn btn-primario">{{ categoriaEditando() ? 'Guardar' : 'Agregar' }}</button>
+          @if (categoriaEditando()) {
+            <button type="button" class="btn" (click)="cancelarCategoria()">Cancelar</button>
+          }
+        </form>
+        <table class="tabla">
+          <tbody>
+            @for (c of categorias(); track c.id) {
+              <tr>
+                <td>{{ c.nombre }}</td>
+                <td>
+                  <div class="acciones">
+                    <button type="button" class="btn btn-chico" (click)="editarCategoria(c)">Editar</button>
+                    <button type="button" class="btn btn-chico btn-peligro" (click)="eliminarCategoria(c)">Borrar</button>
+                  </div>
+                </td>
+              </tr>
+            } @empty {
+              <tr><td colspan="2" class="suave">Todavía no hay categorías.</td></tr>
+            }
+          </tbody>
+        </table>
+      </section>
+    }
+
+    @case ('productos') {
+      @if (mostrarFormProducto()) {
+        <form class="panel" [formGroup]="formProducto" (ngSubmit)="guardarProducto()">
+          <h2>{{ productoEditando() ? 'Editar producto' : 'Nuevo producto' }}</h2>
+          <div class="form-grilla">
+            <div class="campo">
+              <label for="pn">Nombre</label>
+              <input id="pn" formControlName="nombre" maxlength="40" />
+              @if (formProducto.controls.nombre.touched && formProducto.controls.nombre.invalid) {
+                <span class="error">Ingresá el nombre del producto.</span>
+              }
+            </div>
+            <div class="campo">
+              <label for="pc">Categoría</label>
+              <select id="pc" formControlName="categoria_id">
+                <option [ngValue]="null" disabled>Elegí una categoría</option>
+                @for (c of categorias(); track c.id) {
+                  <option [ngValue]="c.id">{{ c.nombre }}</option>
+                }
+              </select>
+              @if (formProducto.controls.categoria_id.touched && formProducto.controls.categoria_id.invalid) {
+                <span class="error">Elegí una categoría.</span>
+              }
+            </div>
+            <div class="campo">
+              <label for="pp">Precio</label>
+              <input id="pp" type="number" min="0" formControlName="precio" />
+              @if (formProducto.controls.precio.touched && formProducto.controls.precio.invalid) {
+                <span class="error">El precio debe ser mayor a 0.</span>
+              }
+            </div>
+            <label class="check campo"><input type="checkbox" formControlName="activo" /> A la venta</label>
+          </div>
+          <div class="pie">
+            <button type="submit" class="btn btn-primario">Guardar</button>
+            <button type="button" class="btn" (click)="cancelarProducto()">Cancelar</button>
+          </div>
+        </form>
+      }
+
+      <section class="panel">
+        <div class="titulo-fila">
+          <h2>Productos</h2>
+          <button type="button" class="btn btn-chico btn-primario" (click)="nuevoProducto()">Nuevo producto</button>
+        </div>
+        @for (grupo of productosPorCategoria(); track grupo.categoria.id) {
+          <h3 class="categoria">{{ grupo.categoria.nombre }}</h3>
+          <div class="tabla-scroll">
+            <table class="tabla">
+              <thead>
+                <tr><th>Producto</th><th class="num">Precio</th><th>Estado</th><th></th></tr>
+              </thead>
+              <tbody>
+                @for (p of grupo.productos; track p.id) {
+                  <tr>
+                    <td>{{ p.nombre }}</td>
+                    <td class="num">{{ p.precio | pesos }}</td>
+                    <td>
+                      @if (p.activo) {
+                        <span class="etiqueta ok">A la venta</span>
+                      } @else {
+                        <span class="etiqueta">Pausado</span>
+                      }
+                    </td>
+                    <td>
+                      <div class="acciones">
+                        <button type="button" class="btn btn-chico" (click)="editarProducto(p)">Editar</button>
+                        <button type="button" class="btn btn-chico btn-peligro" (click)="eliminarProducto(p)">Borrar</button>
+                      </div>
+                    </td>
+                  </tr>
+                } @empty {
+                  <tr><td colspan="4" class="suave">Sin productos en esta categoría.</td></tr>
+                }
+              </tbody>
+            </table>
+          </div>
+        } @empty {
+          <p class="suave">Primero creá una categoría.</p>
+        }
+      </section>
+    }
+
+    @case ('combos') {
+      @if (mostrarFormCombo()) {
+        <form class="panel" [formGroup]="formCombo" (ngSubmit)="guardarCombo()">
+          <h2>{{ comboEditando() ? 'Editar combo' : 'Nuevo combo' }}</h2>
+          <div class="form-grilla">
+            <div class="campo">
+              <label for="cn">Nombre</label>
+              <input id="cn" formControlName="nombre" maxlength="40" />
+              @if (formCombo.controls.nombre.touched && formCombo.controls.nombre.invalid) {
+                <span class="error">Ingresá el nombre del combo.</span>
+              }
+            </div>
+            <div class="campo">
+              <label for="cp">Precio fijo (incluye 1 entrada)</label>
+              <input id="cp" type="number" min="0" formControlName="precio" />
+              @if (formCombo.controls.precio.touched && formCombo.controls.precio.invalid) {
+                <span class="error">El precio debe ser mayor a 0.</span>
+              }
+            </div>
+            <div class="campo ancho">
+              <label for="cd">Descripción</label>
+              <input id="cd" formControlName="descripcion" maxlength="120" />
+            </div>
+            <div class="campo ancho">
+              <span class="etiqueta-campo">Productos incluidos (además de la entrada)</span>
+              <div class="incluidos">
+                @for (p of productosActivos(); track p.id) {
+                  <div class="incluido" [class.con]="cantidadEnCombo(p.id) > 0">
+                    <span>{{ p.nombre }}</span>
+                    <div class="contador">
+                      <button type="button" (click)="quitarItem(p.id)" [attr.aria-label]="'Quitar ' + p.nombre">−</button>
+                      <strong>{{ cantidadEnCombo(p.id) }}</strong>
+                      <button type="button" (click)="agregarItem(p.id)" [attr.aria-label]="'Agregar ' + p.nombre">+</button>
+                    </div>
+                  </div>
+                } @empty {
+                  <p class="suave chico">No hay productos a la venta.</p>
+                }
+              </div>
+            </div>
+            <label class="check campo"><input type="checkbox" formControlName="destacado" /> Destacado en la compra</label>
+            <label class="check campo"><input type="checkbox" formControlName="activo" /> A la venta</label>
+          </div>
+          <div class="pie">
+            <button type="submit" class="btn btn-primario">Guardar</button>
+            <button type="button" class="btn" (click)="cancelarCombo()">Cancelar</button>
+          </div>
+        </form>
+      }
+
+      <section class="panel">
+        <div class="titulo-fila">
+          <h2>Combos</h2>
+          <button type="button" class="btn btn-chico btn-primario" (click)="nuevoCombo()">Nuevo combo</button>
+        </div>
+        <div class="combos">
+          @for (c of combos(); track c.id) {
+            <article class="combo" [class.pausado]="!c.activo">
+              @if (c.destacado) {
+                <span class="etiqueta laton">Destacado</span>
+              }
+              <h3>{{ c.nombre }}</h3>
+              @if (c.descripcion) {
+                <p class="chico">{{ c.descripcion }}</p>
+              }
+              <p class="suave chico">1 entrada · {{ detalleCombo(c) }}</p>
+              <strong class="precio">{{ c.precio | pesos }}</strong>
+              <div class="acciones">
+                <button type="button" class="btn btn-chico" (click)="editarCombo(c)">Editar</button>
+                <button type="button" class="btn btn-chico btn-peligro" (click)="eliminarCombo(c)">Borrar</button>
+              </div>
+            </article>
+          } @empty {
+            <p class="suave">Todavía no hay combos.</p>
+          }
+        </div>
+      </section>
+    }
+  }
+}

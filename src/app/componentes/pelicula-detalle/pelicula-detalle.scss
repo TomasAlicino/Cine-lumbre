@@ -1,0 +1,32 @@
+.ficha { display: grid; grid-template-columns: minmax(180px, 300px) 1fr; gap: clamp(20px, 4vw, 48px); align-items: start; }
+.poster { width: 100%; aspect-ratio: 2 / 3; object-fit: cover; border-radius: var(--r-s); box-shadow: 0 24px 50px rgba(0, 0, 0, 0.4); }
+h1 { font-size: clamp(2.4rem, 6vw, var(--t-4xl)); margin-bottom: 14px; }
+.datos { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 16px; color: var(--humo); font-size: var(--t-s); margin-bottom: 16px; }
+.puntaje { display: flex; align-items: center; gap: 8px; }
+.sinopsis { font-size: var(--t-l); line-height: 1.5; }
+.aviso { margin-top: 12px; }
+.bloque { margin-top: 56px; }
+.dias { display: flex; gap: 8px; overflow-x: auto; padding-bottom: 6px; margin-bottom: 16px; }
+.dia { flex: none; min-width: 84px; padding: 10px 12px; border: 1px solid var(--linea); border-radius: var(--r-s); background: transparent; color: var(--pantalla); cursor: pointer; display: flex; flex-direction: column; align-items: flex-start; gap: 2px; font-family: inherit; }
+.dia span { font: 700 var(--t-l) / 1 var(--f-display); }
+.dia small { color: var(--humo); font-size: var(--t-xs); }
+.dia .feriado { margin-top: 2px; padding: 1px 6px; border-radius: 999px; background: var(--laton); color: var(--noche); font-size: var(--t-xs); font-style: normal; font-weight: 600; }
+.dia.activo { background: var(--pantalla); color: var(--noche); border-color: var(--pantalla); }
+.dia.activo small { color: var(--noche-3); }
+.horarios { display: grid; grid-template-columns: repeat(auto-fill, minmax(190px, 1fr)); gap: 12px; }
+.horario { display: flex; flex-direction: column; gap: 2px; padding: 14px 16px; border: 1px solid var(--linea); border-left: 3px solid var(--laton); border-radius: var(--r-s); background: var(--noche-2); color: var(--pantalla); text-decoration: none; }
+.horario:hover { border-color: var(--laton); color: var(--pantalla); }
+.horario strong { font: 700 var(--t-2xl) / 1 var(--f-display); color: var(--laton); font-variant-numeric: tabular-nums; }
+.horario span { font-size: var(--t-s); }
+.horario small { color: var(--humo); font-size: var(--t-xs); }
+.form-resena { display: grid; gap: 12px; max-width: 560px; margin-bottom: 28px; }
+.form-resena h3 { margin: 0; }
+.form-resena .btn { justify-self: start; }
+.lista-resenas { list-style: none; padding: 0; margin: 0; max-width: 720px; }
+.lista-resenas li { padding: 16px 0; border-bottom: 1px solid var(--linea); }
+.lista-resenas p { margin: 6px 0 0; }
+.cabeza { display: flex; flex-wrap: wrap; align-items: center; gap: 10px; }
+@media (max-width: 640px) {
+  .ficha { grid-template-columns: 1fr; }
+  .poster { max-width: 220px; }
+}

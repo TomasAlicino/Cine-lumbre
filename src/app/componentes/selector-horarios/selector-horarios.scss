@@ -1,0 +1,14 @@
+.selector { display: flex; flex-direction: column; gap: 12px; }
+.paso { display: flex; flex-direction: column; gap: 6px; }
+.etiqueta-campo { font-size: var(--t-xs); color: var(--humo); font-weight: 600; }
+.grilla { display: grid; gap: 6px; }
+.horas { grid-template-columns: repeat(auto-fill, minmax(46px, 1fr)); }
+.minutos { grid-template-columns: repeat(6, minmax(46px, 1fr)); }
+.celda { min-height: 38px; border: 1px solid var(--linea); border-radius: var(--r-s); background: var(--noche); color: var(--pantalla); font: 600 var(--t-s) / 1 var(--f-texto); font-variant-numeric: tabular-nums; cursor: pointer; }
+.celda:hover:not(:disabled) { border-color: var(--humo); }
+.celda.activa { background: var(--pantalla); color: var(--noche); border-color: var(--pantalla); }
+.celda:disabled { opacity: .35; cursor: not-allowed; }
+.elegidos { display: flex; flex-wrap: wrap; gap: 8px; }
+.elegido { display: inline-flex; align-items: center; gap: 6px; padding: 4px 6px 4px 12px; border-radius: 999px; background: var(--laton); color: var(--noche); font-weight: 700; font-size: var(--t-s); font-variant-numeric: tabular-nums; }
+.elegido button { border: 0; background: rgba(20,27,46,.15); color: var(--noche); width: 22px; height: 22px; border-radius: 50%; cursor: pointer; line-height: 1; }
+.ayuda { font-size: var(--t-xs); color: var(--humo); margin: 0; }

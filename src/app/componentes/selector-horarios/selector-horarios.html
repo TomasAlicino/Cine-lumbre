@@ -1,0 +1,27 @@
+<div class="selector">
+  <div class="paso">
+    <span class="etiqueta-campo">Hora</span>
+    <div class="grilla horas">
+      @for (h of horas; track h) {
+        <button type="button" class="celda" [class.activa]="hora() === h" [attr.aria-pressed]="hora() === h" (click)="hora.set(h)">{{ h }}</button>
+      }
+    </div>
+  </div>
+  <div class="paso">
+    <span class="etiqueta-campo">Minutos</span>
+    <div class="grilla minutos">
+      @for (m of minutos; track m) {
+        <button type="button" class="celda" [disabled]="hora() === null" (click)="agregar(m)">:{{ m }}</button>
+      }
+    </div>
+  </div>
+  @if (valores().length) {
+    <div class="elegidos" aria-live="polite">
+      @for (v of valores(); track v) {
+        <span class="elegido">{{ v }} h <button type="button" (click)="quitar(v)" [attr.aria-label]="'Quitar ' + v">×</button></span>
+      }
+    </div>
+  } @else {
+    <p class="ayuda">Tocá una hora y después los minutos para agregar un horario. Podés agregar varios.</p>
+  }
+</div>

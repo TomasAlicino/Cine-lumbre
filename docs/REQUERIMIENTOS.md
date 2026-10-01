@@ -97,7 +97,7 @@ Cada requerimiento tiene un código para referenciarlo en la defensa y su estado
 | UX-02 | **Sin calendarios desplegables** para fechas ni listas largas para horas: fechas con máscara dd/mm/aaaa y atajos, días como chips, horarios con selector rápido | 28/02 | ✅ |
 | UX-03 | Evitar el scroll excesivo | 28/02 | ✅ |
 | TEC-01 | Estilo visual propio | Consigna | ✅ |
-| TEC-02 | Integración con **Supabase** (datos, auth, realtime) | Consigna | ✅ |
+| TEC-02 | Integración con **Supabase** (tablas con RLS, Auth, Storage para pósters) | Consigna | ✅ |
 | TEC-03 | **PWA** instalable con funcionamiento offline del shell | Consigna | ✅ |
 | TEC-04 | Aplicación **desplegada** (Firebase Hosting) | Consigna | ✅ config lista |
 
@@ -107,9 +107,12 @@ Cada requerimiento tiene un código para referenciarlo en la defensa y su estado
 
 - **"Más de 50 años"** se toma literal: edad ≥ 51 al día de la compra.
 - **Fila accesible**: J y K se fusionan en una sola fila "JK" con 14 butacas (2 + 10 + 2).
-- **Recargo VIP**: diferencia entre `precioVip` y `precio` de la función; durante la preventa se suma al precio de preventa.
+- **Recargo VIP**: diferencia entre `precio_vip` y `precio` de la función; durante la preventa se suma al precio de preventa.
 - **Cupón de bienvenida**: se ofrece sin código en la primera compra de un usuario registrado. Se aplica un solo cupón por compra: si el usuario ingresa otro código, se usa ese y se le avisa.
 - **Compra anónima de películas +13/+18**: no se puede verificar la edad, así que se permite y la entrada lleva la leyenda de que debe asistir un adulto.
 - **Cancelación**: devuelve como crédito lo pagado con dinero y con crédito. Los puntos ganados se descuentan y los puntos canjeados se devuelven.
 - **QR único por compra** con dos estados independientes: entrada validada y candy entregado.
+- **Entrada gratis por puntos**: cubre el precio de una entrada común; si la butaca es VIP se paga el recargo.
+- **Butacas en tiempo real**: la pantalla de compra consulta cada 4 segundos las butacas vendidas y las que otra persona está eligiendo (bloqueos de 10 minutos).
+- **Cancelación y cupón de bienvenida**: si se cancela la primera compra, el cupón de bienvenida sigue disponible.
 - **Datos personales**: se piden porque el cliente los pidió explícitamente. Ninguno es obligatorio para comprar como anónimo.

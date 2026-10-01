@@ -1,0 +1,35 @@
+<p class="suave chico">
+  Todo lo que viste en Cine Lumbre (funciones ya empezadas y no canceladas). Calificá cada película:
+  tu calificación también suma al promedio que ven los demás.
+</p>
+
+@if (cargando()) {
+  <p class="suave" aria-live="polite">Cargando tu historial…</p>
+} @else {
+  <div class="pared">
+    @for (v of vistas(); track v.pelicula.id) {
+      <article class="recuerdo">
+        <a [routerLink]="['/pelicula', v.pelicula.id]">
+          <img [src]="v.pelicula.imagen_url ?? 'posters/sin-poster.svg'" [alt]="'Póster de ' + v.pelicula.titulo" appImagenRespaldo loading="lazy" />
+        </a>
+        <div class="datos">
+          <h3>{{ v.pelicula.titulo }}</h3>
+          <span class="suave chico">Vista el {{ v.fecha | fechaAR }}</span>
+          @if (v.resena; as r) {
+            <app-estrellas [valor]="r.estrellas" etiqueta="Tu calificación" />
+            @if (r.comentario) {
+              <p class="coment">"{{ r.comentario }}"</p>
+            }
+          } @else {
+            <a class="btn-texto chico" [routerLink]="['/pelicula', v.pelicula.id]">Calificar esta película</a>
+          }
+        </div>
+      </article>
+    } @empty {
+      <div class="vacio">
+        <p>Cuando veas tu primera película acá va a aparecer su póster.</p>
+        <a routerLink="/cartelera" class="btn btn-primario">Elegir una</a>
+      </div>
+    }
+  </div>
+}

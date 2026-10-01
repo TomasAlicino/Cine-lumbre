@@ -1,0 +1,32 @@
+.modos { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 20px; }
+.modos button { display: flex; flex-direction: column; align-items: flex-start; gap: 2px; padding: 16px 20px; border: 2px solid var(--linea); border-radius: var(--r-m); background: var(--noche-2); color: var(--pantalla); cursor: pointer; text-align: left; font: inherit; }
+.modos button strong { font: 800 var(--t-xl) / 1.1 var(--f-display); text-transform: uppercase; letter-spacing: .02em; }
+.modos button span { color: var(--humo); font-size: var(--t-s); }
+.modos button.activo { border-color: var(--laton); background: var(--noche-3); }
+.modos button.activo strong { color: var(--laton); }
+.grilla { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px; }
+h2 { margin: 0 0 14px; font-size: var(--t-xl); }
+.lector { min-height: 60px; border-radius: var(--r-s); overflow: hidden; margin-bottom: 12px; background: var(--noche); }
+.lector.activo { min-height: 260px; }
+form { display: flex; flex-direction: column; gap: 10px; }
+.codigo { font: 700 var(--t-xl) / 1 ui-monospace, Menlo, monospace !important; letter-spacing: .08em; text-transform: uppercase; text-align: center; }
+.resultado { display: flex; gap: 14px; margin-top: 18px; padding: 16px; border-radius: var(--r-m); background: rgba(179, 48, 63, .18); border: 2px solid var(--terciopelo); }
+.resultado.ok { background: rgba(95, 191, 143, .14); border-color: var(--ok); }
+.icono { flex: none; display: grid; place-items: center; width: 44px; height: 44px; border-radius: 50%; background: var(--terciopelo); color: #fff; font-size: 24px; font-weight: 800; }
+.resultado.ok .icono { background: var(--ok); color: var(--noche); }
+.resultado strong { font: 800 var(--t-xl) / 1.1 var(--f-display); }
+.resultado p { margin: 4px 0 10px; }
+dl { display: grid; gap: 6px; margin: 0; }
+dl div { display: flex; gap: 10px; }
+dt { color: var(--humo); min-width: 70px; font-size: var(--t-s); }
+dd { margin: 0; font-weight: 600; }
+.adulto { margin-top: 10px !important; padding: 8px 12px; background: var(--terciopelo); color: #fff; font-weight: 700; border-radius: var(--r-s); }
+.historial { margin-top: 28px; }
+.historial ul { list-style: none; padding: 0; margin: 0; font-size: var(--t-s); }
+.historial li { padding: 8px 0; border-bottom: 1px solid var(--linea); color: var(--terciopelo-claro); }
+.historial li.ok { color: var(--ok); }
+.historial li span { color: var(--humo); margin-right: 8px; font-variant-numeric: tabular-nums; }
+
+@media (max-width: 560px) {
+  .modos { grid-template-columns: 1fr; }
+}

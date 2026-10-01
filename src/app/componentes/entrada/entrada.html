@@ -1,0 +1,67 @@
+@if (cargando()) {
+  <div class="contenedor pagina"><p class="suave">Buscando tu entrada…</p></div>
+} @else if (pedido(); as p) {
+  <div class="contenedor pagina">
+    <div class="cabecera-pagina">
+      <div>
+        <h1>{{ cancelada() ? 'Compra cancelada' : 'Tu entrada' }}</h1>
+        <p>{{ cancelada() ? 'Esta compra fue cancelada y el QR ya no sirve. El importe se acreditó en tu cuenta.' : 'Mostrá el QR en la puerta de la sala y en el candy bar. También te la podés descargar en PDF.' }}</p>
+      </div>
+    </div>
+
+    <article class="ticket" [class.anulada]="cancelada()">
+      <div class="cuerpo">
+        <h2>{{ p.funciones.peliculas.titulo }}</h2>
+        <dl>
+          <div><dt>Día</dt><dd class="cap">{{ p.funciones.inicio | dia }}</dd></div>
+          <div><dt>Hora</dt><dd>{{ p.funciones.inicio | hora }} h</dd></div>
+          <div><dt>Sala</dt><dd>{{ p.funciones.salas.nombre }}</dd></div>
+          <div><dt>Formato</dt><dd>{{ p.funciones.formato }} {{ p.funciones.idioma === 'castellano' ? 'castellano' : 'subtitulada' }}</dd></div>
+          <div class="ancho">
+            <dt>Butacas</dt>
+            <dd class="butacas">
+              @for (b of p.butacas; track b) {
+                <span [class]="'b ' + tipo(b)">{{ b }}@if (tipo(b) === 'vip') { <small>VIP</small> } @else if (tipo(b) === 'accesible') { <small>Accesible</small> }</span>
+              }
+            </dd>
+          </div>
+          @if (candy().length) {
+            <div class="ancho"><dt>Candy</dt><dd>@for (i of candy(); track $index; let last = $last) {{{ i.cantidad }}× {{ i.nombre }}{{ last ? '' : ', ' }}}</dd></div>
+          }
+          <div><dt>Titular</dt><dd>{{ p.comprador_nombre }}</dd></div>
+          <div><dt>Pagaste</dt><dd>{{ p.total | pesos }}@if (p.credito_usado) { + {{ p.credito_usado | pesos }} de crédito }</dd></div>
+        </dl>
+        @if (p.requiere_adulto) {
+          <p class="adulto">Película {{ p.funciones.peliculas.clasificacion }}: debe asistir un adulto.</p>
+        }
+      </div>
+      <div class="qr">
+        @if (qr()) {
+          <img [src]="qr()" [alt]="'Código QR de la entrada ' + p.codigo" width="200" height="200" />
+        }
+        <code>{{ p.codigo }}</code>
+        <p class="estado">
+          <span [class.usado]="!!p.entrada_validada_en">Sala: {{ p.entrada_validada_en ? 'ingresó' : 'sin usar' }}</span>
+          @if (candy().length) { <span [class.usado]="!!p.candy_entregado_en">Candy: {{ p.candy_entregado_en ? 'retirado' : 'sin retirar' }}</span> }
+        </p>
+      </div>
+    </article>
+
+    <div class="acciones">
+      <button type="button" class="btn btn-primario" (click)="descargar()" [disabled]="cancelada() || descargando()">
+        {{ descargando() ? 'Generando PDF…' : 'Descargar PDF' }}
+      </button>
+      @if (p.usuario_id) { <a routerLink="/mi-cuenta/compras" class="btn">Ver mis compras</a> }
+      <a routerLink="/cartelera" class="btn">Volver a la cartelera</a>
+    </div>
+    @if (!p.usuario_id) {
+      <p class="aviso">Compraste sin cuenta: descargá el PDF ahora, porque si recargás o cerrás esta página ya no vas a poder volver a verla.</p>
+    }
+  </div>
+} @else {
+  <div class="contenedor pagina vacio">
+    <p>No encontramos esa entrada.</p>
+    <p class="suave chico">Si compraste sin cuenta y recargaste la página, ya no se puede volver a mostrar: usá el PDF que descargaste o mostrá el código en la boletería.</p>
+    <a routerLink="/" class="btn">Ir al inicio</a>
+  </div>
+}

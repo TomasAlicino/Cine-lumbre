@@ -1,0 +1,4 @@
+:host { display: grid; gap: 20px; }
+.titulo-fila { display: flex; justify-content: space-between; align-items: center; gap: 10px; margin-bottom: 12px; flex-wrap: wrap; }
+.buscar { max-width: 300px; }
+.rol { min-height: 34px; padding: 4px 8px; width: auto; }

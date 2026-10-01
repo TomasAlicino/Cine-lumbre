@@ -1,0 +1,13 @@
+:host { display: grid; gap: 20px; }
+h2 { margin: 0 0 16px; font-size: var(--t-xl); }
+.pie { margin: 20px 0 12px; }
+.aviso ul { margin: 6px 0 0; padding-left: 18px; }
+.aviso p { margin: 6px 0 0; }
+.dias-agenda { display: flex; gap: 6px; overflow-x: auto; padding-bottom: 8px; margin-bottom: 12px; }
+.dias-agenda button { display: flex; flex-direction: column; align-items: center; justify-content: center; min-width: 72px; padding: 8px 6px; border: 1px solid var(--linea); border-radius: var(--r-s); background: transparent; color: var(--pantalla); cursor: pointer; font: inherit; }
+.dias-agenda span { font-size: var(--t-xs); color: var(--humo); text-transform: capitalize; white-space: nowrap; }
+.dias-agenda strong { font: 800 var(--t-xl) / 1 var(--f-display); }
+.dias-agenda .activo { background: var(--laton); border-color: var(--laton); color: var(--noche); }
+.dias-agenda .activo span { color: var(--noche); }
+.precios { display: inline-flex; gap: 4px; }
+.precios input { width: 90px; min-height: 32px; padding: 4px 6px; }

@@ -1,0 +1,74 @@
+@if (cargando()) {
+  <div class="contenedor pagina"><p class="suave">Cargando cartelera…</p></div>
+} @else {
+  <section class="marquesina">
+    <div class="contenedor">
+      <div class="titular">
+        <h1>Lo más visto en Lumbre</h1>
+        <p>Las tres películas que más entradas vendieron. Elegí función y butaca en menos de un minuto.</p>
+      </div>
+      <ol class="podio">
+        @for (p of top(); track p.id; let i = $index) {
+          <li class="puesto" [class.primero]="i === 0">
+            <a [routerLink]="['/pelicula', p.id]" class="afiche">
+              <img [src]="p.imagen_url" [alt]="'Póster de ' + p.titulo" appImagenRespaldo />
+              <span class="numeral" aria-hidden="true">{{ i + 1 }}</span>
+            </a>
+            <div class="datos">
+              <h2><a [routerLink]="['/pelicula', p.id]">{{ p.titulo }}</a></h2>
+              <p class="suave chico">
+                {{ p.duracion_min | duracion }} · {{ p.clasificacion }}
+                @if (promedios().get(p.id); as pr) { · ★ {{ pr.promedio.toFixed(1) }} }
+              </p>
+              <a class="btn btn-primario btn-chico" [routerLink]="['/pelicula', p.id]" fragment="funciones">Ver funciones</a>
+            </div>
+          </li>
+        } @empty {
+          <li class="vacio"><p>Todavía no hay películas a la venta.</p></li>
+        }
+      </ol>
+    </div>
+  </section>
+
+  <section class="contenedor seccion">
+    <div class="cabecera-pagina">
+      <div>
+        <h2>En cartelera</h2>
+        <p>Seleccionadas por el cine para esta semana.</p>
+      </div>
+      <a routerLink="/cartelera" class="btn">Ver toda la cartelera</a>
+    </div>
+    <div class="grilla">
+      @for (p of destacadas(); track p.id) {
+        <app-pelicula-card [pelicula]="p" [promedio]="promedios().get(p.id)" [preventa]="enPreventa(p)" />
+      } @empty {
+        <div class="vacio"><p>Todavía no hay películas destacadas.</p></div>
+      }
+    </div>
+  </section>
+
+  @if (proximas().length) {
+    <section class="contenedor seccion">
+      <div class="cabecera-pagina">
+        <div>
+          <h2>Próximamente</h2>
+          <p>Activá una alerta y te avisamos cuando salgan las entradas.</p>
+        </div>
+        <a routerLink="/proximamente" class="btn">Ver estrenos</a>
+      </div>
+      <ul class="proximas">
+        @for (p of proximas(); track p.id) {
+          <li>
+            <a [routerLink]="['/pelicula', p.id]">
+              <strong>{{ p.titulo }}</strong>
+              <span class="suave chico">Estrena el {{ p.fecha_estreno | fechaAR }}</span>
+              @if (p.preventa_habilitada) {
+                <span class="etiqueta laton">Con preventa</span>
+              }
+            </a>
+          </li>
+        }
+      </ul>
+    </section>
+  }
+}

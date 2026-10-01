@@ -1,0 +1,14 @@
+.card { display: flex; flex-direction: column; gap: 12px; }
+.poster { position: relative; display: block; aspect-ratio: 2 / 3; border-radius: var(--r-s); overflow: hidden; background: var(--noche-3); }
+.poster img { width: 100%; height: 100%; object-fit: cover; }
+.poster:focus-visible { outline-offset: 3px; }
+.clasif, .preventa { position: absolute; top: 8px; padding: 2px 7px; font: 700 var(--t-xs) / 1.4 var(--f-texto); border-radius: var(--r-s); }
+.clasif { left: 8px; background: var(--pantalla); color: var(--noche); }
+.clasif.adulto { background: var(--terciopelo); color: #fff; }
+.preventa { right: 8px; background: var(--laton); color: var(--noche); }
+h3 { font-size: var(--t-l); margin: 0 0 4px; }
+h3 a { color: var(--pantalla); text-decoration: none; }
+h3 a:hover { color: var(--laton); }
+.meta { margin: 0; font-size: var(--t-s); color: var(--humo); display: flex; gap: 10px; }
+.nota { color: var(--laton); font-weight: 600; }
+.generos { margin: 2px 0 10px; font-size: var(--t-xs); color: var(--humo); }

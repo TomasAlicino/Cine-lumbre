@@ -1,0 +1,176 @@
+<header class="cabecera-pagina">
+  <div>
+    <h1>Funciones</h1>
+    <p>Elegí película, días y horarios: el sistema asigna la sala sola y respeta 30 minutos de limpieza entre funciones.</p>
+  </div>
+</header>
+
+<form class="panel" [formGroup]="form" (ngSubmit)="programar()" novalidate>
+  <h2>Programar funciones</h2>
+  <div class="form-grilla">
+    <div class="campo ancho">
+      <label for="peli">Película</label>
+      <select id="peli" formControlName="pelicula_id">
+        <option [ngValue]="null" disabled>Elegí una película</option>
+        @for (p of peliculas(); track p.id) {
+          <option [ngValue]="p.id">{{ p.titulo }} ({{ p.duracion_min }} min)</option>
+        }
+      </select>
+      @if (form.controls.pelicula_id.touched && form.controls.pelicula_id.invalid) {
+        <span class="error">Elegí una película.</span>
+      }
+    </div>
+    <div class="campo">
+      <label for="desde">Desde</label>
+      <input id="desde" formControlName="desde" appMascaraFecha="dd/mm/aaaa" inputmode="numeric" placeholder="dd/mm/aaaa" />
+      @if (form.controls.desde.touched && form.controls.desde.invalid) {
+        <span class="error">Fecha inválida.</span>
+      }
+    </div>
+    <div class="campo">
+      <label for="hasta">Hasta</label>
+      <input id="hasta" formControlName="hasta" appMascaraFecha="dd/mm/aaaa" inputmode="numeric" placeholder="dd/mm/aaaa" />
+      @if (form.controls.hasta.touched && form.controls.hasta.invalid) {
+        <span class="error">Fecha inválida.</span>
+      }
+    </div>
+    <div class="campo">
+      <span class="etiqueta-campo">Atajos</span>
+      <div class="chips">
+        <button type="button" class="chip" (click)="rapido(7)">1 semana</button>
+        <button type="button" class="chip" (click)="rapido(14)">2 semanas</button>
+        <button type="button" class="chip" (click)="rapido(28)">4 semanas</button>
+      </div>
+    </div>
+
+    @if (feriadosEnRango().length) {
+      <div class="aviso ancho feriados" role="status">
+        <strong>El rango incluye feriados:</strong>
+        <ul>
+          @for (f of feriadosEnRango(); track f.date) {
+            <li>{{ f.date | fechaAR }} — {{ f.localName }}</li>
+          }
+        </ul>
+        <p class="suave chico">Es solo un aviso: las funciones se programan igual.</p>
+      </div>
+    }
+
+    <div class="campo ancho">
+      <span class="etiqueta-campo">Días de la semana</span>
+      <app-selector-dias [(valores)]="dias" />
+    </div>
+    <div class="campo ancho">
+      <span class="etiqueta-campo">Horarios</span>
+      <app-selector-horarios [(valores)]="horarios" />
+    </div>
+    <div class="campo">
+      <span class="etiqueta-campo" id="lbl-formato">Formato</span>
+      <div class="chips" role="group" aria-labelledby="lbl-formato">
+        @for (fo of formatos; track fo) {
+          <button type="button" class="chip" [class.activo]="form.controls.formato.value === fo" [attr.aria-pressed]="form.controls.formato.value === fo" (click)="form.controls.formato.setValue(fo)">{{ fo }}</button>
+        }
+      </div>
+    </div>
+    <div class="campo">
+      <span class="etiqueta-campo" id="lbl-idioma">Idioma</span>
+      <div class="chips" role="group" aria-labelledby="lbl-idioma">
+        <button type="button" class="chip" [class.activo]="form.controls.idioma.value === 'castellano'" [attr.aria-pressed]="form.controls.idioma.value === 'castellano'" (click)="form.controls.idioma.setValue('castellano')">Castellano</button>
+        <button type="button" class="chip" [class.activo]="form.controls.idioma.value === 'subtitulada'" [attr.aria-pressed]="form.controls.idioma.value === 'subtitulada'" (click)="form.controls.idioma.setValue('subtitulada')">Subtitulada</button>
+      </div>
+    </div>
+    <div class="campo">
+      <label for="precio">Precio entrada</label>
+      <input id="precio" type="number" min="0" formControlName="precio" />
+      @if (form.controls.precio.touched && form.controls.precio.invalid) {
+        <span class="error">Ingresá un precio válido.</span>
+      }
+    </div>
+    <div class="campo">
+      <label for="vip">Precio butaca VIP (filas R, S, T)</label>
+      <input id="vip" type="number" min="0" formControlName="precio_vip" />
+      @if (form.controls.precio_vip.touched && form.controls.precio_vip.invalid) {
+        <span class="error">Ingresá un precio válido.</span>
+      }
+    </div>
+  </div>
+  @if (errorForm()) {
+    <p class="aviso error">{{ errorForm() }}</p>
+  }
+  <div class="pie">
+    <button type="submit" class="btn btn-primario" [disabled]="programando()">{{ programando() ? 'Creando...' : 'Crear funciones' }}</button>
+  </div>
+
+  @if (resultado(); as r) {
+    <div class="aviso" [class.ok]="r.creadas && !r.conflictos.length" [class.error]="!r.creadas" role="status">
+      <strong>{{ r.creadas }} funciones creadas.</strong>
+      @if (r.conflictos.length) {
+        <p>No se pudieron crear {{ r.conflictos.length }}:</p>
+        <ul>
+          @for (c of r.conflictos; track $index) {
+            <li>{{ c.fecha | fechaAR }} {{ c.hora }} h — {{ c.motivo }}</li>
+          }
+        </ul>
+      }
+    </div>
+  }
+</form>
+
+<section class="panel">
+  <h2>Agenda</h2>
+  <div class="dias-agenda" role="tablist" aria-label="Día de la agenda">
+    <button type="button" role="tab" [attr.aria-selected]="diaSel() === ''" [class.activo]="diaSel() === ''" (click)="diaSel.set('')">
+      <span>Próximos</span><strong>14</strong>
+    </button>
+    @for (d of diasAgenda; track d) {
+      <button type="button" role="tab" [attr.aria-selected]="d === diaSel()" [class.activo]="d === diaSel()" (click)="diaSel.set(d)">
+        <span>{{ fechaDe(d) | dia: 'corto' }}</span>
+      </button>
+    }
+  </div>
+
+  @if (cargando()) {
+    <p class="suave">Cargando funciones…</p>
+  } @else {
+    <div class="tabla-scroll">
+      <table class="tabla">
+        <thead>
+          <tr><th>Día</th><th>Hora</th><th>Película</th><th>Sala</th><th>Formato</th><th class="num">Precio / VIP</th><th></th></tr>
+        </thead>
+        <tbody>
+          @for (f of agenda(); track f.id) {
+            <tr>
+              <td>{{ f.inicio | dia: 'corto' }}</td>
+              <td><strong>{{ f.inicio | hora }}</strong>–{{ f.fin | hora }}</td>
+              <td>{{ f.peliculas.titulo }}</td>
+              <td>{{ f.salas.nombre }}</td>
+              <td>{{ f.formato }} · {{ f.idioma === 'castellano' ? 'Cast.' : 'Subt.' }}</td>
+              <td class="num">
+                @if (editandoId() === f.id) {
+                  <span class="precios">
+                    <input type="number" min="0" [(ngModel)]="precioEdit" aria-label="Precio" />
+                    <input type="number" min="0" [(ngModel)]="vipEdit" aria-label="Precio VIP" />
+                  </span>
+                } @else {
+                  {{ f.precio | pesos }} / {{ f.precio_vip | pesos }}
+                }
+              </td>
+              <td>
+                <div class="acciones">
+                  @if (editandoId() === f.id) {
+                    <button type="button" class="btn btn-chico btn-primario" (click)="guardarPrecio(f)">OK</button>
+                    <button type="button" class="btn btn-chico" (click)="editandoId.set(null)" aria-label="Cancelar edición">×</button>
+                  } @else {
+                    <button type="button" class="btn btn-chico" (click)="editarPrecio(f)">Precio</button>
+                    <button type="button" class="btn btn-chico btn-peligro" (click)="eliminar(f)">Borrar</button>
+                  }
+                </div>
+              </td>
+            </tr>
+          } @empty {
+            <tr><td colspan="7" class="suave">No hay funciones programadas para este día.</td></tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  }
+</section>
