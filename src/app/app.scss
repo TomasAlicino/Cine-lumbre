@@ -1,0 +1,49 @@
+.saltar { position: absolute; left: -999px; top: 8px; z-index: 200; background: var(--laton); color: var(--noche); padding: 8px 12px; border-radius: var(--r-s); }
+.saltar:focus { left: 8px; }
+
+.barra { position: sticky; top: 0; z-index: 50; background: rgba(20, 27, 46, 0.92); backdrop-filter: blur(10px); border-bottom: 1px solid var(--linea); padding-top: env(safe-area-inset-top, 0px); }
+.barra-interior { display: flex; align-items: center; gap: 24px; min-height: 64px; }
+
+.marca { display: flex; align-items: baseline; gap: 6px; text-decoration: none; margin-right: auto; }
+.marca-lumbre { font: 900 1.9rem / 1 var(--f-display); color: var(--laton); letter-spacing: 0.02em; }
+.marca-lumbre.chica { font-size: 1.4rem; }
+.marca-cine { font: 500 var(--t-s) / 1 var(--f-texto); color: var(--humo); }
+
+.nav { display: flex; align-items: center; gap: 22px; }
+.nav a:not(.btn), .nav-boton { color: var(--pantalla); text-decoration: none; font-size: var(--t-s); font-weight: 500; padding: 6px 0; border-bottom: 2px solid transparent; background: none; border-top: 0; border-left: 0; border-right: 0; cursor: pointer; font-family: inherit; }
+.nav a:not(.btn):hover, .nav-boton:hover { color: var(--laton); }
+.nav a.activo { border-bottom-color: var(--laton); }
+.cuenta { display: inline-flex; align-items: center; gap: 8px; }
+.puntos { font-size: var(--t-xs); background: var(--noche-3); padding: 1px 7px; border-radius: 999px; color: var(--laton); font-weight: 700; }
+
+.hamburguesa { display: none; width: 42px; height: 42px; background: none; border: 1px solid var(--linea); border-radius: var(--r-s); cursor: pointer; position: relative; }
+.hamburguesa span[aria-hidden], .hamburguesa span[aria-hidden]::before, .hamburguesa span[aria-hidden]::after { position: absolute; left: 11px; width: 18px; height: 2px; background: var(--pantalla); content: ''; }
+.hamburguesa span[aria-hidden] { top: 19px; }
+.hamburguesa span[aria-hidden]::before { top: -6px; left: 0; }
+.hamburguesa span[aria-hidden]::after { top: 6px; left: 0; }
+
+.avisos { position: relative; }
+.campana { position: relative; width: 42px; height: 42px; display: grid; place-items: center; background: none; border: 1px solid var(--linea); border-radius: 50%; color: var(--pantalla); cursor: pointer; }
+.contador { position: absolute; top: -4px; right: -4px; min-width: 18px; height: 18px; padding: 0 5px; border-radius: 9px; background: var(--terciopelo); color: #fff; font-size: 11px; font-weight: 700; display: grid; place-items: center; }
+.panel-avisos { position: absolute; right: 0; top: 50px; width: min(340px, calc(100vw - 32px)); max-height: 60vh; overflow-y: auto; background: var(--noche-2); border: 1px solid var(--linea); border-radius: var(--r-m); padding: 8px; box-shadow: 0 16px 40px rgba(0,0,0,.45); }
+.panel-avisos p { padding: 12px; margin: 0; }
+.aviso-item { display: flex; flex-direction: column; gap: 2px; padding: 10px 12px; border-radius: var(--r-s); color: var(--pantalla); text-decoration: none; font-size: var(--t-s); }
+.aviso-item:hover { background: var(--noche-3); color: var(--pantalla); }
+.aviso-item.nuevo { border-left: 3px solid var(--laton); }
+.aviso-item small { color: var(--humo); }
+
+main { min-height: calc(100vh - 64px - 90px); }
+
+.pie { border-top: 1px solid var(--linea); padding: 28px 0 36px; }
+.pie-interior { display: flex; flex-wrap: wrap; align-items: baseline; gap: 12px 24px; }
+
+@media (max-width: 900px) {
+  .hamburguesa { display: block; order: 3; }
+  .avisos { order: 2; }
+  .barra-interior { gap: 12px; }
+  .nav { display: none; position: absolute; left: 0; right: 0; top: 100%; flex-direction: column; align-items: stretch; gap: 0; padding: 8px clamp(16px, 4vw, 32px) 20px; background: var(--noche); border-bottom: 1px solid var(--linea); }
+  .nav.abierta { display: flex; }
+  .nav a:not(.btn), .nav-boton { padding: 14px 0; border-bottom: 1px solid var(--linea); text-align: left; font-size: var(--t-m); }
+  .nav a.activo { color: var(--laton); border-bottom-color: var(--linea); }
+  .registro { margin-top: 14px; min-height: 44px; }
+}

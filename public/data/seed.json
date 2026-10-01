@@ -1,0 +1,545 @@
+{
+  "usuarios": [
+    {
+      "id": "u-admin",
+      "email": "admin@lumbre.com",
+      "passwordHash": "2fb557abaf21a442a3ca665a8cab7305bb037ee03447bf5574a3a8bacf6c6627",
+      "nombre": "Ana",
+      "apellido": "Administradora",
+      "fechaNacimiento": "1985-04-12",
+      "tipoSangre": "0+",
+      "colorOjos": "Marrón",
+      "diasVacaciones": 14,
+      "rol": "admin",
+      "puntos": 0,
+      "credito": 0,
+      "creadoEn": "2026-09-30T23:42:21.997Z"
+    },
+    {
+      "id": "u-emp",
+      "email": "empleado@lumbre.com",
+      "passwordHash": "70b25084b1329d15aa99202be7b86edcebe27561a4338b46f7612401195829ca",
+      "nombre": "Tomás",
+      "apellido": "Boletería",
+      "fechaNacimiento": "1998-09-03",
+      "tipoSangre": "0+",
+      "colorOjos": "Marrón",
+      "diasVacaciones": 14,
+      "rol": "empleado",
+      "puntos": 0,
+      "credito": 0,
+      "creadoEn": "2026-09-30T23:42:21.997Z"
+    },
+    {
+      "id": "u-cli",
+      "email": "cliente@lumbre.com",
+      "passwordHash": "a5ae764163195118bf3c799cbf13e44251da757d858f0f88b7980e2e0b6f6d4c",
+      "nombre": "Lucía",
+      "apellido": "Pérez",
+      "fechaNacimiento": "1994-06-21",
+      "tipoSangre": "A+",
+      "colorOjos": "Verde",
+      "diasVacaciones": 21,
+      "rol": "cliente",
+      "puntos": 1200,
+      "credito": 0,
+      "creadoEn": "2026-09-30T23:42:21.997Z"
+    },
+    {
+      "id": "u-mayor",
+      "email": "mayor@lumbre.com",
+      "passwordHash": "28580499feff07fbe98fcd1e7896454bd63a436de7b750c21eed914dad8cf86c",
+      "nombre": "Roberto",
+      "apellido": "Gómez",
+      "fechaNacimiento": "1962-02-10",
+      "tipoSangre": "B-",
+      "colorOjos": "Azul",
+      "diasVacaciones": 30,
+      "rol": "cliente",
+      "puntos": 0,
+      "credito": 0,
+      "creadoEn": "2026-09-30T23:42:21.997Z"
+    },
+    {
+      "id": "u-teen",
+      "email": "joven@lumbre.com",
+      "passwordHash": "7fbf951e4f8c0cef53079852e625d5e19651cc4ce0e3a89cb556bf73f56c0701",
+      "nombre": "Martina",
+      "apellido": "Sosa",
+      "fechaNacimiento": "2012-11-15",
+      "tipoSangre": "AB+",
+      "colorOjos": "Miel",
+      "diasVacaciones": 60,
+      "rol": "cliente",
+      "puntos": 0,
+      "credito": 0,
+      "creadoEn": "2026-09-30T23:42:21.997Z"
+    }
+  ],
+  "peliculas": [
+    {
+      "id": "p1",
+      "titulo": "La Última Marea",
+      "sinopsis": "Un faro abandonado guarda la clave de una ciudad que el mar se tragó hace cien años.",
+      "duracionMin": 128,
+      "imagenUrl": "posters/la-ultima-marea.svg",
+      "generos": [
+        "Aventura",
+        "Drama"
+      ],
+      "clasificacion": "+13",
+      "estado": "cartelera",
+      "destacada": true,
+      "fechaEstreno": "2026-01-01",
+      "_offsetEstreno": -20,
+      "preventa": {
+        "habilitada": false,
+        "precio": 5200,
+        "diasAntes": 7
+      }
+    },
+    {
+      "id": "p2",
+      "titulo": "Pochoclo Galáctico",
+      "sinopsis": "Una familia de roedores espaciales se pierde en un cine intergaláctico el día del estreno.",
+      "duracionMin": 94,
+      "imagenUrl": "posters/pochoclo-galactico.svg",
+      "generos": [
+        "Animación",
+        "Comedia"
+      ],
+      "clasificacion": "ATP",
+      "estado": "cartelera",
+      "destacada": true,
+      "fechaEstreno": "2026-01-01",
+      "_offsetEstreno": -12,
+      "preventa": {
+        "habilitada": false,
+        "precio": 5200,
+        "diasAntes": 7
+      }
+    },
+    {
+      "id": "p3",
+      "titulo": "Noche sin Cuervos",
+      "sinopsis": "Cuatro amigos pasan la noche en una estancia donde nadie recuerda haber llegado.",
+      "duracionMin": 112,
+      "imagenUrl": "posters/noche-sin-cuervos.svg",
+      "generos": [
+        "Terror",
+        "Suspenso"
+      ],
+      "clasificacion": "+18",
+      "estado": "cartelera",
+      "destacada": true,
+      "fechaEstreno": "2026-01-01",
+      "_offsetEstreno": -8,
+      "preventa": {
+        "habilitada": false,
+        "precio": 5200,
+        "diasAntes": 7
+      }
+    },
+    {
+      "id": "p4",
+      "titulo": "Tango en Marte",
+      "sinopsis": "La primera colonia marciana organiza una milonga para no olvidar la Tierra.",
+      "duracionMin": 121,
+      "imagenUrl": "posters/tango-en-marte.svg",
+      "generos": [
+        "Ciencia ficción",
+        "Musical",
+        "Romance"
+      ],
+      "clasificacion": "ATP",
+      "estado": "cartelera",
+      "destacada": false,
+      "fechaEstreno": "2026-01-01",
+      "_offsetEstreno": -30,
+      "preventa": {
+        "habilitada": false,
+        "precio": 5200,
+        "diasAntes": 7
+      }
+    },
+    {
+      "id": "p5",
+      "titulo": "El Archivo Rojo",
+      "sinopsis": "Una periodista encuentra un expediente que no debería existir en el sótano del diario.",
+      "duracionMin": 135,
+      "imagenUrl": "posters/el-archivo-rojo.svg",
+      "generos": [
+        "Suspenso",
+        "Drama"
+      ],
+      "clasificacion": "+13",
+      "estado": "cartelera",
+      "destacada": false,
+      "fechaEstreno": "2026-01-01",
+      "_offsetEstreno": -5,
+      "preventa": {
+        "habilitada": false,
+        "precio": 5200,
+        "diasAntes": 7
+      }
+    },
+    {
+      "id": "p6",
+      "titulo": "Riachuelo",
+      "sinopsis": "Documental sobre el río que atraviesa la historia del sur del conurbano.",
+      "duracionMin": 88,
+      "imagenUrl": "posters/riachuelo.svg",
+      "generos": [
+        "Documental"
+      ],
+      "clasificacion": "ATP",
+      "estado": "cartelera",
+      "destacada": false,
+      "fechaEstreno": "2026-01-01",
+      "_offsetEstreno": -40,
+      "preventa": {
+        "habilitada": false,
+        "precio": 5200,
+        "diasAntes": 7
+      }
+    },
+    {
+      "id": "p7",
+      "titulo": "Guardianes del Eclipse",
+      "sinopsis": "Tres hermanas heredan el deber de impedir que el sol no vuelva a salir.",
+      "duracionMin": 142,
+      "imagenUrl": "posters/guardianes-del-eclipse.svg",
+      "generos": [
+        "Fantasía",
+        "Acción",
+        "Aventura"
+      ],
+      "clasificacion": "+13",
+      "estado": "proximamente",
+      "destacada": false,
+      "fechaEstreno": "2026-01-01",
+      "_offsetEstreno": 4,
+      "preventa": {
+        "habilitada": true,
+        "precio": 5200,
+        "diasAntes": 7
+      }
+    },
+    {
+      "id": "p8",
+      "titulo": "Risas de Domingo",
+      "sinopsis": "Una comedia coral sobre el asado familiar más largo de la historia.",
+      "duracionMin": 101,
+      "imagenUrl": "posters/risas-de-domingo.svg",
+      "generos": [
+        "Comedia"
+      ],
+      "clasificacion": "ATP",
+      "estado": "proximamente",
+      "destacada": false,
+      "fechaEstreno": "2026-01-01",
+      "_offsetEstreno": 10,
+      "preventa": {
+        "habilitada": true,
+        "precio": 5200,
+        "diasAntes": 7
+      }
+    },
+    {
+      "id": "p9",
+      "titulo": "Frecuencia Cero",
+      "sinopsis": "Un radioaficionado capta una señal que llega desde el día de mañana.",
+      "duracionMin": 117,
+      "imagenUrl": "posters/frecuencia-cero.svg",
+      "generos": [
+        "Ciencia ficción",
+        "Suspenso"
+      ],
+      "clasificacion": "+18",
+      "estado": "proximamente",
+      "destacada": false,
+      "fechaEstreno": "2026-01-01",
+      "_offsetEstreno": 21,
+      "preventa": {
+        "habilitada": false,
+        "precio": 5200,
+        "diasAntes": 7
+      }
+    }
+  ],
+  "salas": [
+    {
+      "id": "s1",
+      "nombre": "Sala 1",
+      "activa": true,
+      "butacasDeshabilitadas": []
+    },
+    {
+      "id": "s2",
+      "nombre": "Sala 2",
+      "activa": true,
+      "butacasDeshabilitadas": []
+    },
+    {
+      "id": "s3",
+      "nombre": "Sala 3",
+      "activa": true,
+      "butacasDeshabilitadas": []
+    },
+    {
+      "id": "s4",
+      "nombre": "Sala 4",
+      "activa": true,
+      "butacasDeshabilitadas": []
+    },
+    {
+      "id": "s5",
+      "nombre": "Sala 5",
+      "activa": true,
+      "butacasDeshabilitadas": []
+    }
+  ],
+  "funciones": [],
+  "pedidos": [],
+  "bloqueos": [],
+  "categorias": [
+    {
+      "id": "c1",
+      "nombre": "Pochoclos"
+    },
+    {
+      "id": "c2",
+      "nombre": "Bebidas"
+    },
+    {
+      "id": "c3",
+      "nombre": "Golosinas"
+    },
+    {
+      "id": "c4",
+      "nombre": "Snacks salados"
+    }
+  ],
+  "productos": [
+    {
+      "id": "pr1",
+      "nombre": "Pochoclo chico",
+      "categoriaId": "c1",
+      "precio": 2800,
+      "activo": true
+    },
+    {
+      "id": "pr2",
+      "nombre": "Pochoclo mediano",
+      "categoriaId": "c1",
+      "precio": 3600,
+      "activo": true
+    },
+    {
+      "id": "pr3",
+      "nombre": "Pochoclo grande",
+      "categoriaId": "c1",
+      "precio": 4400,
+      "activo": true
+    },
+    {
+      "id": "pr4",
+      "nombre": "Gaseosa 500 ml",
+      "categoriaId": "c2",
+      "precio": 2400,
+      "activo": true
+    },
+    {
+      "id": "pr5",
+      "nombre": "Agua mineral",
+      "categoriaId": "c2",
+      "precio": 1600,
+      "activo": true
+    },
+    {
+      "id": "pr6",
+      "nombre": "Gaseosa 1 L",
+      "categoriaId": "c2",
+      "precio": 3300,
+      "activo": true
+    },
+    {
+      "id": "pr7",
+      "nombre": "Chocolate",
+      "categoriaId": "c3",
+      "precio": 1900,
+      "activo": true
+    },
+    {
+      "id": "pr8",
+      "nombre": "Gomitas",
+      "categoriaId": "c3",
+      "precio": 1500,
+      "activo": true
+    },
+    {
+      "id": "pr9",
+      "nombre": "Nachos con cheddar",
+      "categoriaId": "c4",
+      "precio": 4200,
+      "activo": true
+    },
+    {
+      "id": "pr10",
+      "nombre": "Pancho",
+      "categoriaId": "c4",
+      "precio": 3000,
+      "activo": true
+    }
+  ],
+  "combos": [
+    {
+      "id": "cb1",
+      "nombre": "Combo Clásico",
+      "descripcion": "Entrada + pochoclo mediano + gaseosa 500 ml",
+      "precio": 11500,
+      "items": [
+        {
+          "productoId": "pr2",
+          "cantidad": 1
+        },
+        {
+          "productoId": "pr4",
+          "cantidad": 1
+        }
+      ],
+      "destacado": true,
+      "activo": true
+    },
+    {
+      "id": "cb2",
+      "nombre": "Combo Pareja",
+      "descripcion": "Entrada + pochoclo grande + 2 gaseosas",
+      "precio": 14900,
+      "items": [
+        {
+          "productoId": "pr3",
+          "cantidad": 1
+        },
+        {
+          "productoId": "pr4",
+          "cantidad": 2
+        }
+      ],
+      "destacado": true,
+      "activo": true
+    },
+    {
+      "id": "cb3",
+      "nombre": "Combo Nachos",
+      "descripcion": "Entrada + nachos con cheddar + gaseosa 1 L",
+      "precio": 13200,
+      "items": [
+        {
+          "productoId": "pr9",
+          "cantidad": 1
+        },
+        {
+          "productoId": "pr6",
+          "cantidad": 1
+        }
+      ],
+      "destacado": false,
+      "activo": true
+    }
+  ],
+  "cupones": [
+    {
+      "id": "cu1",
+      "codigo": "DORADOS50",
+      "porcentaje": 30,
+      "soloMayoresDe": 50,
+      "activo": true,
+      "usos": 0
+    },
+    {
+      "id": "cu2",
+      "codigo": "LUMBRE10",
+      "porcentaje": 10,
+      "soloMayoresDe": null,
+      "activo": true,
+      "usos": 0
+    }
+  ],
+  "recompensas": [
+    {
+      "id": "r1",
+      "nombre": "Entrada gratis",
+      "tipo": "entrada",
+      "productoId": null,
+      "costoPuntos": 500,
+      "activa": true
+    },
+    {
+      "id": "r2",
+      "nombre": "Pochoclo grande",
+      "tipo": "producto",
+      "productoId": "pr3",
+      "costoPuntos": 150,
+      "activa": true
+    },
+    {
+      "id": "r3",
+      "nombre": "Gaseosa 500 ml",
+      "tipo": "producto",
+      "productoId": "pr4",
+      "costoPuntos": 90,
+      "activa": true
+    }
+  ],
+  "canjes": [],
+  "resenas": [
+    {
+      "id": "re1",
+      "peliculaId": "p1",
+      "usuarioId": "u-cli",
+      "autor": "Lucía P.",
+      "estrellas": 5,
+      "comentario": "Hermosa fotografía, salí con ganas de ir al mar.",
+      "fecha": "2026-09-30T23:42:21.997Z"
+    },
+    {
+      "id": "re2",
+      "peliculaId": "p1",
+      "usuarioId": "u-mayor",
+      "autor": "Roberto G.",
+      "estrellas": 4,
+      "comentario": "Un poco larga, pero el final vale la pena.",
+      "fecha": "2026-09-30T23:42:21.997Z"
+    },
+    {
+      "id": "re3",
+      "peliculaId": "p2",
+      "usuarioId": "u-cli",
+      "autor": "Lucía P.",
+      "estrellas": 4,
+      "comentario": "Mis sobrinos no pararon de reírse.",
+      "fecha": "2026-09-30T23:42:21.997Z"
+    },
+    {
+      "id": "re4",
+      "peliculaId": "p3",
+      "usuarioId": "u-mayor",
+      "autor": "Roberto G.",
+      "estrellas": 3,
+      "comentario": "Da miedo de verdad. No apta para impresionables.",
+      "fecha": "2026-09-30T23:42:21.997Z"
+    }
+  ],
+  "alertas": [],
+  "notificaciones": [],
+  "actividad": [],
+  "configuracion": [
+    {
+      "id": "global",
+      "porcentajePrimeraCompra": 20,
+      "minutosLimpieza": 30,
+      "horasLimiteCancelacion": 2
+    }
+  ]
+}

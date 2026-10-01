@@ -1,0 +1,70 @@
+<a class="saltar" href="#contenido">Ir al contenido</a>
+<header class="barra">
+  <div class="contenedor barra-interior">
+    <a routerLink="/" class="marca" aria-label="Cine Lumbre, inicio">
+      <span class="marca-lumbre">Lumbre</span>
+      <span class="marca-cine">cine</span>
+    </a>
+
+    <button type="button" class="hamburguesa" (click)="menuAbierto = !menuAbierto" [attr.aria-expanded]="menuAbierto" aria-controls="nav-principal">
+      <span class="solo-lector">Menú</span>
+      <span aria-hidden="true"></span>
+    </button>
+
+    <nav id="nav-principal" class="nav" [class.abierta]="menuAbierto" aria-label="Principal">
+      <a routerLink="/cartelera" routerLinkActive="activo">Cartelera</a>
+      <a routerLink="/proximamente" routerLinkActive="activo">Próximamente</a>
+      <a *appSiRol="['empleado', 'admin']" routerLink="/validar" routerLinkActive="activo">Validar QR</a>
+      <a *appSiRol="['admin']" routerLink="/admin" routerLinkActive="activo">Administración</a>
+
+      @if (auth.usuario$ | async; as u) {
+        <a routerLink="/mi-cuenta" routerLinkActive="activo" class="cuenta">
+          {{ u.nombre }}
+          @if (u.rol === 'cliente') {
+            <span class="puntos">{{ u.puntos }} pts</span>
+          }
+        </a>
+        <button type="button" class="nav-boton" (click)="salir()">Salir</button>
+      } @else {
+        <a routerLink="/ingresar" routerLinkActive="activo">Ingresar</a>
+        <a routerLink="/registro" class="btn btn-primario btn-chico registro">Crear cuenta</a>
+      }
+    </nav>
+
+    @if (auth.logueado$ | async) {
+      <div class="avisos">
+        <button type="button" class="campana" (click)="abrirAvisos()" [attr.aria-expanded]="panelAvisos" aria-label="Avisos">
+          <svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true"><path fill="currentColor" d="M12 22a2.5 2.5 0 0 0 2.45-2h-4.9A2.5 2.5 0 0 0 12 22Zm7-6V11a7 7 0 0 0-5.5-6.84V3a1.5 1.5 0 0 0-3 0v1.16A7 7 0 0 0 5 11v5l-2 2v1h18v-1l-2-2Z"/></svg>
+          @if (notificaciones.noLeidas$ | async; as n) {
+            <span class="contador">{{ n }}</span>
+          }
+        </button>
+        @if (panelAvisos) {
+          <div class="panel-avisos" role="dialog" aria-label="Avisos">
+            @for (n of notificaciones.mias$ | async; track n.id) {
+              <a class="aviso-item" [class.nuevo]="!n.leida" [routerLink]="n.enlace">
+                <span>{{ n.mensaje }}</span>
+                <small>{{ n.fecha.slice(0, 10).split('-').reverse().join('/') }}</small>
+              </a>
+            } @empty {
+              <p class="suave chico">Sin avisos. Activá alertas desde Próximamente para enterarte cuando salgan las entradas.</p>
+            }
+          </div>
+        }
+      </div>
+    }
+  </div>
+</header>
+
+<main id="contenido">
+  <router-outlet />
+</main>
+
+<footer class="pie">
+  <div class="contenedor pie-interior">
+    <span class="marca-lumbre chica">Lumbre</span>
+    <span class="suave chico">Av. Mitre 750, Avellaneda · Boletería desde 13 h · Todas las salas con fila accesible</span>
+  </div>
+</footer>
+
+<app-toasts />
