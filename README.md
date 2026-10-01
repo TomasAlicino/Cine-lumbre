@@ -6,7 +6,7 @@ para empleados y panel de administración con reportes.
 
 **TP 1 — Programación IV (UTN FRA, 2026)**
 
-- 🌐 **Demo:** `https://<tu-proyecto>.web.app` *(completar después del deploy)*
+- 🌐 **Demo:** https://cine-lumbre.web.app
 - 📄 **Requerimientos:** [docs/REQUERIMIENTOS.md](docs/REQUERIMIENTOS.md)
 - 🗄️ **Esquema Supabase:** [docs/supabase.sql](docs/supabase.sql)
 
@@ -53,9 +53,8 @@ entre pestañas). Sirve para probar sin backend.
 ```bash
 npm install -g firebase-tools
 firebase login
-firebase init hosting   # usar el firebase.json existente, carpeta pública: dist/cine-lumbre/browser
 npm run build
-firebase deploy
+firebase deploy --only hosting   # proyecto "cine-lumbre" (ver .firebaserc)
 ```
 
 `firebase.json` ya tiene el *rewrite* a `index.html` (necesario para las rutas de Angular), el
