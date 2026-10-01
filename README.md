@@ -25,23 +25,13 @@ Tarjeta de prueba: `4111 1111 1111 1111`, vencimiento futuro, CVV `123`.
 
 ---
 
-## Puesta en marcha
+## Correr en local
 
-Requiere **Node.js 20.19+ o 22.12+** (Angular 21).
+Solo hace falta **Node.js 20.19 o superior** (Angular viene con el proyecto y se instala con `npm install`).
 
 ```bash
 npm install
 npm start            # http://localhost:4200
-npm run build        # genera dist/cine-lumbre/browser
-```
-
-### Deploy en Firebase Hosting
-
-```bash
-npm install -g firebase-tools
-firebase login
-npm run build
-firebase deploy --only hosting   # proyecto "cine-lumbre" (ver .firebaserc)
 ```
 
 ---
