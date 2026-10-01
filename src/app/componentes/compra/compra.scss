@@ -1,7 +1,8 @@
 .volver { display: inline-block; margin-bottom: 12px; font-size: var(--t-s); text-decoration: none; }
 .encabezado h1 { font-size: clamp(2rem, 5vw, var(--t-3xl)); margin-bottom: 6px; }
 .funcion { display: flex; flex-wrap: wrap; gap: 4px 16px; color: var(--humo); font-size: var(--t-s); }
-.funcion strong { color: var(--pantalla); text-transform: capitalize; }
+.funcion strong { color: var(--pantalla); display: inline-block; }
+.funcion strong::first-letter { text-transform: uppercase; }
 
 .pasos { list-style: none; display: flex; gap: 8px; margin: 24px 0; padding: 0; overflow-x: auto; }
 .pasos button { display: flex; align-items: center; gap: 10px; padding: 8px 14px 8px 8px; background: none; border: 1px solid var(--linea); border-radius: 999px; color: var(--humo); font: 600 var(--t-s) / 1 var(--f-texto); cursor: pointer; white-space: nowrap; }

@@ -89,7 +89,7 @@
                   <div class="cupon">
                     <div class="campo">
                       <label for="cupon">Código de cupón</label>
-                      <input id="cupon" [(ngModel)]="codigoCupon" placeholder="Ej: MAYORES50" autocomplete="off" (keydown.enter)="aplicarCupon()" />
+                      <input id="cupon" [(ngModel)]="codigoCupon" placeholder="Ej: LUMBRE10" autocomplete="off" (keydown.enter)="aplicarCupon()" />
                     </div>
                     <button type="button" class="btn" (click)="aplicarCupon()" [disabled]="!codigoCupon().trim() || validandoCupon()">
                       {{ validandoCupon() ? 'Validando…' : 'Aplicar' }}

@@ -1,9 +1,11 @@
 import { Component, OnDestroy, OnInit, computed, inject, signal } from '@angular/core';
 import { FormBuilder, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
+import { Subscription } from 'rxjs';
 import { ImagenRespaldoDirective, MascaraFechaDirective } from '../../directivas/directivas';
 import { Clasificacion, EstadoPelicula, GENEROS, Pelicula } from '../../models/models';
 import { BuscarPeliculasPipe, DuracionPipe, FechaARPipe } from '../../pipes/pipes';
 import { DatosPelicula, PeliculasService } from '../../services/peliculas-service';
+import { PeliculaTmdb, TmdbService } from '../../services/tmdb-service';
 import { ToastService } from '../../services/toast-service';
 import { formatearFechaAR, parsearFechaAR } from '../../utils/fechas';
 import { estadoVenta } from '../../utils/negocio';
@@ -20,6 +22,7 @@ export class AdminPeliculas implements OnInit, OnDestroy {
   private peliculasService = inject(PeliculasService);
   private fb = inject(FormBuilder);
   private toast = inject(ToastService);
+  private tmdb = inject(TmdbService);
 
   generos = GENEROS;
   clasificaciones: Clasificacion[] = ['ATP', '+13', '+18'];
@@ -49,6 +52,13 @@ export class AdminPeliculas implements OnInit, OnDestroy {
   archivo = signal<File | null>(null);
   vistaPrevia = signal<string | null>(null);
 
+  // Búsqueda en TMDB (API pública por HTTP) para completar el formulario
+  textoTmdb = signal('');
+  resultadosTmdb = signal<PeliculaTmdb[]>([]);
+  buscandoTmdb = signal(false);
+  imagenTmdb = signal<string | null>(null); // póster elegido desde TMDB
+  private subsTmdb: Subscription[] = [];
+
   form = this.fb.nonNullable.group({
     titulo: ['', [Validators.required, Validators.maxLength(80)]],
     sinopsis: ['', [Validators.required, Validators.minLength(20)]],
@@ -69,6 +79,7 @@ export class AdminPeliculas implements OnInit, OnDestroy {
 
   ngOnDestroy() {
     this.liberarVistaPrevia();
+    this.subsTmdb.forEach((s) => s.unsubscribe());
   }
 
   async cargar() {
@@ -86,6 +97,7 @@ export class AdminPeliculas implements OnInit, OnDestroy {
     this.form.reset();
     this.editando.set(null);
     this.limpiarArchivo();
+    this.limpiarTmdb();
     this.abierto.set(true);
   }
 
@@ -105,6 +117,7 @@ export class AdminPeliculas implements OnInit, OnDestroy {
     });
     this.editando.set(p);
     this.limpiarArchivo();
+    this.limpiarTmdb();
     this.abierto.set(true);
     window.scrollTo({ top: 0, behavior: 'smooth' });
   }
@@ -119,6 +132,58 @@ export class AdminPeliculas implements OnInit, OnDestroy {
     const lista = control.value;
     control.setValue(lista.includes(g) ? lista.filter((x) => x !== g) : [...lista, g]);
     control.markAsTouched();
+  }
+
+  // ── Búsqueda en TMDB ──
+
+  buscarEnTmdb() {
+    const texto = this.textoTmdb().trim();
+    if (texto.length < 2) return;
+    this.buscandoTmdb.set(true);
+    const sub = this.tmdb.buscar(texto).subscribe({
+      next: (lista) => {
+        this.resultadosTmdb.set(lista);
+        this.buscandoTmdb.set(false);
+        if (!lista.length) this.toast.info('TMDB no encontró películas con ese nombre.');
+      },
+      error: () => {
+        this.buscandoTmdb.set(false);
+        this.toast.error('No se pudo consultar TMDB. Revisá la clave en environment.ts.');
+      },
+    });
+    this.subsTmdb.push(sub);
+  }
+
+  /** Trae el detalle y completa el formulario; clasificación, estado y preventa los revisa el admin. */
+  elegirDeTmdb(r: PeliculaTmdb) {
+    const sub = this.tmdb.detalle(r.id).subscribe({
+      next: (d) => {
+        this.form.patchValue({
+          titulo: d.titulo,
+          sinopsis: d.sinopsis,
+          duracion_min: d.duracion_min,
+          generos: d.generos,
+          clasificacion: d.clasificacion,
+          fecha_estreno: d.fecha_estreno ? formatearFechaAR(d.fecha_estreno) : '',
+        });
+        this.limpiarArchivo();
+        this.imagenTmdb.set(d.imagen_url);
+        this.resultadosTmdb.set([]);
+        this.toast.ok('Datos cargados desde TMDB. Revisalos antes de guardar.');
+      },
+      error: () => this.toast.error('No se pudo traer el detalle de TMDB.'),
+    });
+    this.subsTmdb.push(sub);
+  }
+
+  posterTmdb(r: PeliculaTmdb): string | null {
+    return this.tmdb.urlPoster(r.poster_path);
+  }
+
+  private limpiarTmdb() {
+    this.textoTmdb.set('');
+    this.resultadosTmdb.set([]);
+    this.imagenTmdb.set(null);
   }
 
   // ── Póster ──
@@ -152,7 +217,7 @@ export class AdminPeliculas implements OnInit, OnDestroy {
 
   /** Lo que se ve en el recuadro: el archivo nuevo o la imagen que ya tenía la película. */
   imagenActual(): string | null {
-    return this.vistaPrevia() ?? this.editando()?.imagen_url ?? null;
+    return this.vistaPrevia() ?? this.imagenTmdb() ?? this.editando()?.imagen_url ?? null;
   }
 
   // ── Guardar / eliminar ──
@@ -166,7 +231,8 @@ export class AdminPeliculas implements OnInit, OnDestroy {
       titulo: v.titulo.trim(),
       sinopsis: v.sinopsis.trim(),
       duracion_min: Number(v.duracion_min),
-      imagen_url: anterior?.imagen_url ?? null, // si no se elige archivo se conserva la imagen
+      // Si no se sube archivo: el póster de TMDB o la imagen que ya tenía
+      imagen_url: this.imagenTmdb() ?? anterior?.imagen_url ?? null,
       generos: v.generos,
       clasificacion: v.clasificacion,
       estado: v.estado,

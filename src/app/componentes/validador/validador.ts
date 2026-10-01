@@ -82,7 +82,7 @@ export class Validador implements OnDestroy {
   private mostrar(r: Resultado, codigo: string) {
     this.resultado.set(r);
     const registro: Registro = {
-      hora: new Date().toLocaleTimeString('es-AR', { hour: '2-digit', minute: '2-digit' }),
+      hora: new Date().toLocaleTimeString('es-AR', { hour: '2-digit', minute: '2-digit', hourCycle: 'h23' }),
       codigo,
       titulo: `${this.modo() === 'sala' ? 'Sala' : 'Candy'}: ${r.titulo}`,
       ok: r.ok,

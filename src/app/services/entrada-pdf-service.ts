@@ -46,7 +46,7 @@ export class EntradaPdfService {
     };
     const candy = pedido.items.filter((i) => i.tipo !== 'canje-entrada');
     fila('Fecha', inicio.toLocaleDateString('es-AR', { weekday: 'long', day: 'numeric', month: 'long' }));
-    fila('Hora', inicio.toLocaleTimeString('es-AR', { hour: '2-digit', minute: '2-digit' }) + ' h');
+    fila('Hora', inicio.toLocaleTimeString('es-AR', { hour: '2-digit', minute: '2-digit', hourCycle: 'h23' }) + ' h');
     fila('Sala', f.salas.nombre);
     fila('Formato', `${f.formato} · ${f.idioma === 'castellano' ? 'Castellano' : 'Subtitulada'}`);
     fila('Butacas', pedido.butacas.map((b) => `${b}${tipoDeButaca(b) === 'vip' ? ' VIP' : tipoDeButaca(b) === 'accesible' ? ' (accesible)' : ''}`).join(', '));

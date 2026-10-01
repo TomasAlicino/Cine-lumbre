@@ -153,7 +153,7 @@ export class FuncionesService {
     if (error) throw new Error(error.message);
     await this.actividad.registrar(
       'Modificó precio de función',
-      `${f.peliculas.titulo} ${new Date(f.inicio).toLocaleString('es-AR')}: $${f.precio}/$${f.precio_vip} VIP → $${precio}/$${precioVip} VIP`,
+      `${f.peliculas.titulo} ${new Date(f.inicio).toLocaleString('es-AR', { dateStyle: 'short', timeStyle: 'short', hourCycle: 'h23' })}: $${f.precio}/$${f.precio_vip} VIP → $${precio}/$${precioVip} VIP`,
     );
   }
 
@@ -161,6 +161,6 @@ export class FuncionesService {
     const { error } = await this.supabase.from('funciones').delete().eq('id', f.id);
     if (error?.code === '23503') throw new Error('La función ya tiene entradas vendidas y no se puede eliminar.');
     if (error) throw new Error(error.message);
-    await this.actividad.registrar('Eliminó función', `${f.peliculas.titulo} ${new Date(f.inicio).toLocaleString('es-AR')}`);
+    await this.actividad.registrar('Eliminó función', `${f.peliculas.titulo} ${new Date(f.inicio).toLocaleString('es-AR', { dateStyle: 'short', timeStyle: 'short', hourCycle: 'h23' })}`);
   }
 }

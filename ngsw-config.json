@@ -50,6 +50,17 @@
         "maxSize": 5,
         "maxAge": "7d"
       }
+    },
+    {
+      "name": "posters-tmdb",
+      "urls": [
+        "https://image.tmdb.org/**"
+      ],
+      "cacheConfig": {
+        "strategy": "performance",
+        "maxSize": 100,
+        "maxAge": "30d"
+      }
     }
   ]
 }

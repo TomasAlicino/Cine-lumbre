@@ -11,6 +11,31 @@
 @if (abierto()) {
   <form class="panel editor" [formGroup]="form" (ngSubmit)="guardar()" novalidate>
     <h2>{{ editando() ? 'Editar película' : 'Nueva película' }}</h2>
+    <div class="tmdb">
+      <label for="tmdb">Buscar en TMDB para completar los datos</label>
+      <div class="tmdb-fila">
+        <input id="tmdb" type="search" [ngModel]="textoTmdb()" (ngModelChange)="textoTmdb.set($event)" [ngModelOptions]="{ standalone: true }"
+          (keydown.enter)="$event.preventDefault(); buscarEnTmdb()" placeholder="Ej: Intensamente 2" autocomplete="off" />
+        <button type="button" class="btn" (click)="buscarEnTmdb()" [disabled]="buscandoTmdb()">{{ buscandoTmdb() ? 'Buscando…' : 'Buscar' }}</button>
+      </div>
+      @if (resultadosTmdb().length) {
+        <ul class="tmdb-resultados">
+          @for (r of resultadosTmdb(); track r.id) {
+            <li>
+              <button type="button" (click)="elegirDeTmdb(r)">
+                @if (posterTmdb(r); as src) {
+                  <img [src]="src" alt="" loading="lazy" />
+                } @else {
+                  <span class="tmdb-sin"></span>
+                }
+                <span><strong>{{ r.title }}</strong><small>{{ r.release_date | fechaAR }}</small></span>
+              </button>
+            </li>
+          }
+        </ul>
+      }
+      <span class="ayuda">Datos de The Movie Database. Después revisá clasificación, estado y preventa.</span>
+    </div>
     <div class="con-poster">
       <div class="poster">
         @if (imagenActual(); as src) {

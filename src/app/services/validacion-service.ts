@@ -39,12 +39,12 @@ export class ValidacionService {
     const empleado = `${u.nombre} ${u.apellido}`;
 
     if (modo === 'sala') {
-      if (pedido.entrada_validada_en) throw new Error(`El QR ya se usó para ingresar el ${new Date(pedido.entrada_validada_en).toLocaleString('es-AR')}.`);
+      if (pedido.entrada_validada_en) throw new Error(`El QR ya se usó para ingresar el ${new Date(pedido.entrada_validada_en).toLocaleString('es-AR', { dateStyle: 'short', timeStyle: 'short', hourCycle: 'h23' })}.`);
       if (ahora > new Date(f.fin)) throw new Error('La función ya terminó.');
-      if (ahora < sumarMinutos(new Date(f.inicio), -120)) throw new Error(`Todavía no se puede ingresar: la función es el ${new Date(f.inicio).toLocaleString('es-AR')}.`);
+      if (ahora < sumarMinutos(new Date(f.inicio), -120)) throw new Error(`Todavía no se puede ingresar: la función es el ${new Date(f.inicio).toLocaleString('es-AR', { dateStyle: 'short', timeStyle: 'short', hourCycle: 'h23' })}.`);
     } else {
       if (!this.tieneCandy(pedido)) throw new Error('Esta compra no incluye productos del candy.');
-      if (pedido.candy_entregado_en) throw new Error(`El candy ya se entregó el ${new Date(pedido.candy_entregado_en).toLocaleString('es-AR')}.`);
+      if (pedido.candy_entregado_en) throw new Error(`El candy ya se entregó el ${new Date(pedido.candy_entregado_en).toLocaleString('es-AR', { dateStyle: 'short', timeStyle: 'short', hourCycle: 'h23' })}.`);
     }
 
     // Se actualiza solo si el campo sigue vacío: si dos empleados escanean a la vez, gana uno solo

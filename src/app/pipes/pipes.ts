@@ -45,7 +45,7 @@ export class FechaARPipe implements PipeTransform {
 @Pipe({ name: 'hora' })
 export class HoraPipe implements PipeTransform {
   transform(iso: string | null | undefined): string {
-    return iso ? new Date(iso).toLocaleTimeString('es-AR', { hour: '2-digit', minute: '2-digit' }) : '';
+    return iso ? new Date(iso).toLocaleTimeString('es-AR', { hour: '2-digit', minute: '2-digit', hourCycle: 'h23' }) : '';
   }
 }
 
