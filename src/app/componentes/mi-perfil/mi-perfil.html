@@ -1,71 +1,16 @@
 @if (auth.usuario(); as u) {
   <div class="grilla">
     <section class="panel">
-      <div class="titulo-fila">
-        <h2>Mis datos</h2>
-        @if (!editando()) {
-          <button type="button" class="btn btn-chico" (click)="editar()">Editar</button>
-        }
-      </div>
-
-      @if (editando()) {
-        <form [formGroup]="form" (ngSubmit)="guardar()" novalidate>
-          <div class="form-grilla">
-            <div class="campo">
-              <label for="p-nombre">Nombre</label>
-              <input id="p-nombre" formControlName="nombre" autocomplete="given-name" />
-              @if (form.controls.nombre.touched && form.controls.nombre.invalid) {
-                <span class="error">Completá tu nombre.</span>
-              }
-            </div>
-            <div class="campo">
-              <label for="p-apellido">Apellido</label>
-              <input id="p-apellido" formControlName="apellido" autocomplete="family-name" />
-              @if (form.controls.apellido.touched && form.controls.apellido.invalid) {
-                <span class="error">Completá tu apellido.</span>
-              }
-            </div>
-            <div class="campo">
-              <label for="p-sangre">Tipo de sangre</label>
-              <select id="p-sangre" formControlName="tipo_sangre">
-                @for (t of tiposSangre; track t) {
-                  <option [value]="t">{{ t }}</option>
-                }
-              </select>
-            </div>
-            <div class="campo">
-              <label for="p-ojos">Color de ojos</label>
-              <select id="p-ojos" formControlName="color_ojos">
-                @for (c of coloresOjos; track c) {
-                  <option [value]="c">{{ c }}</option>
-                }
-              </select>
-            </div>
-            <div class="campo">
-              <label for="p-vac">Días de vacaciones por año</label>
-              <input id="p-vac" type="number" min="0" max="365" formControlName="dias_vacaciones" inputmode="numeric" />
-              @if (form.controls.dias_vacaciones.touched && form.controls.dias_vacaciones.invalid) {
-                <span class="error">Entre 0 y 365.</span>
-              }
-            </div>
-          </div>
-          <p class="suave chico">El mail y la fecha de nacimiento no se pueden cambiar.</p>
-          <div class="fila">
-            <button type="submit" class="btn btn-primario btn-chico" [disabled]="guardando()">Guardar</button>
-            <button type="button" class="btn btn-chico" (click)="editando.set(false)">Cancelar</button>
-          </div>
-        </form>
-      } @else {
-        <dl>
-          <div><dt>Nombre</dt><dd>{{ u.nombre }} {{ u.apellido }}</dd></div>
-          <div><dt>Mail</dt><dd>{{ u.email }}</dd></div>
-          <div><dt>Nacimiento</dt><dd>{{ u.fecha_nacimiento | fechaAR }} ({{ auth.edad() }} años)</dd></div>
-          <div><dt>Tipo de sangre</dt><dd>{{ u.tipo_sangre }}</dd></div>
-          <div><dt>Color de ojos</dt><dd>{{ u.color_ojos }}</dd></div>
-          <div><dt>Vacaciones</dt><dd>{{ u.dias_vacaciones }} días por año</dd></div>
-          <div><dt>Miembro desde</dt><dd>{{ u.creado_en | fechaAR }}</dd></div>
-        </dl>
-      }
+      <h2>Mis datos</h2>
+      <dl>
+        <div><dt>Nombre</dt><dd>{{ u.nombre }} {{ u.apellido }}</dd></div>
+        <div><dt>Mail</dt><dd>{{ u.email }}</dd></div>
+        <div><dt>Nacimiento</dt><dd>{{ u.fecha_nacimiento | fechaAR }} ({{ auth.edad() }} años)</dd></div>
+        <div><dt>Tipo de sangre</dt><dd>{{ u.tipo_sangre }}</dd></div>
+        <div><dt>Color de ojos</dt><dd>{{ u.color_ojos }}</dd></div>
+        <div><dt>Vacaciones</dt><dd>{{ u.dias_vacaciones }} días por año</dd></div>
+        <div><dt>Miembro desde</dt><dd>{{ u.creado_en | fechaAR }}</dd></div>
+      </dl>
     </section>
 
     <section class="panel">

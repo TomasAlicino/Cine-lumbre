@@ -40,7 +40,6 @@ export class AdminTablero implements OnInit {
   totalFacturacion = computed(() => this.filas().reduce((a, f) => a + f.facturacion, 0));
   totalEntradas = computed(() => this.filas().reduce((a, f) => a + f.entradas, 0));
   totalPedidos = computed(() => this.filas().reduce((a, f) => a + f.pedidos, 0));
-  ticketPromedio = computed(() => (this.totalPedidos() ? this.totalFacturacion() / this.totalPedidos() : 0));
 
   // La barra más alta del gráfico es el día que más se facturó
   maxFacturacion = computed(() => Math.max(1, ...this.filas().map((f) => f.facturacion)));

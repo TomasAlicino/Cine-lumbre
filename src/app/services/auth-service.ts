@@ -79,14 +79,6 @@ export class AuthService {
     if (u) this.usuario.set(await this.traerPerfil(u.id));
   }
 
-  async actualizarPerfil(cambios: Partial<Perfil>): Promise<void> {
-    const u = this.usuario();
-    if (!u) throw new Error('Tu sesión venció. Volvé a ingresar.');
-    const { data, error } = await this.supabase.from('perfiles').update(cambios).eq('id', u.id).select().single();
-    if (error) throw new Error(error.message);
-    this.usuario.set(data as Perfil);
-  }
-
   /** La sesión la guarda supabase-js; getUser() la valida contra el servidor. */
   private async cargarSesion(): Promise<void> {
     try {
