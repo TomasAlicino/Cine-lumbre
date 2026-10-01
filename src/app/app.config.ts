@@ -14,9 +14,12 @@ export const appConfig: ApplicationConfig = {
     provideRouter(routes, withComponentInputBinding(), withInMemoryScrolling({ scrollPositionRestoration: 'top' })),
     provideHttpClient(withFetch()),
     provideAppInitializer(async () => {
+      // inject() solo funciona antes del primer await (contexto de inyección)
+      const demo = inject(DemoService);
+      const notificaciones = inject(NotificacionesService);
       // Carga inicial de datos (por HTTP desde data/seed.json la primera vez)
-      await firstValueFrom(inject(DemoService).preparar());
-      inject(NotificacionesService).iniciarVigilancia();
+      await firstValueFrom(demo.preparar());
+      notificaciones.iniciarVigilancia();
     }),
     provideServiceWorker('ngsw-worker.js', {
       enabled: !isDevMode(),
